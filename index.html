@@ -1,60 +1,54 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Chamada Fácil - Chamada de alunos simples, rápida e sem papel. Uma ferramenta pensada para professores que querem ganhar tempo em sala de aula.">
+  <meta name="description"
+    content="Chamada Fácil - Chamada de alunos simples, rápida e sem papel. Uma ferramenta pensada para professores que querem ganhar tempo em sala de aula.">
   <meta name="theme-color" content="#2c7da0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Chamada Fácil - Chamada de Alunos Simples</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
- <header role="banner" aria-label="Cabeçalho do site Chamada Fácil">
-  <div class="header__container">
-    <div class="header__logo">
-      <img
-        src="assets/Logo1024.svg"
-        class="logo__image"
-        alt="Logo Chamada Fácil"
-      />
-      <span class="header__title">Chamada Fácil</span>
-    </div>
 
-    <nav class="header__nav" aria-label="Navegação principal">
-      <ul class="nav__list">
-        <li><a href="#problema" class="nav__link">Problema</a></li>
-        <li><a href="#solucao" class="nav__link">Solução</a></li>
-        <li><a href="#como-funciona" class="nav__link">Como funciona</a></li>
-        <li><a href="#status" class="nav__link">Status</a></li>
-        <li>
-          <a href="https://app.chamadafacil.net.br" 
-             class="nav__link nav__cta" 
-             target="_blank" 
-             rel="noopener">
-             Abrir App
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-</header>
+<body>
+  <header role="banner" aria-label="Cabeçalho do site Chamada Fácil">
+    <div class="header__container">
+      <div class="header__logo">
+        <img src="assets/Logo1024.svg" class="logo__image" alt="Logo Chamada Fácil" />
+        <span class="header__title">Chamada Fácil</span>
+      </div>
+
+      <nav class="header__nav" aria-label="Navegação principal">
+        <ul class="nav__list">
+          <li><a href="#problema" class="nav__link">Problema</a></li>
+          <li><a href="#solucao" class="nav__link">Solução</a></li>
+          <li><a href="#como-funciona" class="nav__link">Como funciona</a></li>
+          <li><a href="#status" class="nav__link">Status</a></li>
+          <li>
+            <a href="https://app.chamadafacil.net.br" class="nav__link nav__cta" target="_blank" rel="noopener">
+              Abrir App
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
   <main>
     <!-- HERO SECTION -->
     <section class="hero hero--with-image" aria-label="Seção de apresentação do Chamada Fácil">
       <div class="hero__container">
-        <h1 class="hero__title">Chamada de alunos simples, rápida e sem papel. em breve, disponível para Android e iOS.</h1>
+        <h1 class="hero__title">Chamada de alunos simples, rápida e sem papel. <br> <span>Em breve para Android e
+            iOS.</span></h1>
         <p class="hero__description">
           Uma ferramenta pensada para professores que querem ganhar tempo em sala de aula.
         </p>
         <div class="hero__actions">
-          <button 
-            class="btn btn--secondary" 
-            disabled 
-            aria-label="Status do app" 
-          > 
-            Em testes com professores 
-          </button> 
+          <button class="btn btn--secondary" aria-label="Status do app">
+            Em testes com professores
+          </button>
         </div>
         <p class="hero__footnote">
           <small>Estamos testando com professores reais. Em breve disponível para todos.</small>
@@ -69,7 +63,7 @@
         <p class="section__description">
           Chamadas manuais consomem tempo valioso que deveria ser dedicado ao aprendizado.
         </p>
-        
+
         <div class="problems__grid" role="list">
           <article class="problem-card" role="listitem" aria-labelledby="problem-1">
             <div class="problem-card__icon" aria-hidden="true">⏱️</div>
@@ -186,12 +180,13 @@
     <section id="status" class="section section--white" aria-labelledby="status-title">
       <div class="section__container">
         <h2 id="status-title" class="section__title">Status do Projeto</h2>
-        
+
         <article class="status-card" aria-labelledby="status-desc">
           <div class="status-card__icon" aria-hidden="true">🚀</div>
           <h3 class="status-card__title">MVP em Desenvolvimento</h3>
           <p id="status-desc" class="status-card__text">
-            Estamos testando Chamada Fácil com professores reais em sala de aula. Seus feedbacks estão moldando o produto.
+            Estamos testando Chamada Fácil com professores reais em sala de aula. Seus feedbacks estão moldando o
+            produto.
           </p>
           <p class="status-card__highlight">
             Próximas fases: Relatórios avançados, Integração com sistemas escolares, App nativa.
@@ -211,23 +206,24 @@
       </p>
     </div>
   </footer>
-  <button id="scrollTopBtn" aria-label="Voltar ao topo"> 
-    ↑ 
-  </button> 
-  <script> 
-  const btn = document.getElementById('scrollTopBtn'); 
-  
-  window.addEventListener('scroll', () => { 
-    if (window.scrollY > 300) { 
-      btn.classList.add('show'); 
-    } else { 
-      btn.classList.remove('show'); 
-    } 
-  }); 
-  
-  btn.addEventListener('click', () => { 
-    window.scrollTo({ top: 0, behavior: 'smooth' }); 
-  }); 
+  <button id="scrollTopBtn" aria-label="Voltar ao topo">
+    ↑
+  </button>
+  <script>
+    const btn = document.getElementById('scrollTopBtn');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        btn.classList.add('show');
+      } else {
+        btn.classList.remove('show');
+      }
+    });
+
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }); 
   </script>
 </body>
+
 </html>
