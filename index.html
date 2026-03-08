@@ -5,9 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="Chamada Fácil - Chamada de alunos simples, rápida e sem papel. Uma ferramenta pensada para professores que querem ganhar tempo em sala de aula.">
+    content="Chamada Fácil - Chamada de alunos simples, rápida e sem papel. Registre presenca em segundos, sem papel e sem friccao.">
   <meta name="theme-color" content="#2c7da0">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Chamada Fácil - Chamada de Alunos Simples</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -16,7 +15,7 @@
   <header role="banner" aria-label="Cabeçalho do site Chamada Fácil">
     <div class="header__container">
       <div class="header__logo">
-        <img src="assets/Logo1024.svg" class="logo__image" alt="Logo Chamada Fácil" />
+        <img src="assets/logo1024wt.svg" class="logo__image" alt="Logo Chamada Fácil" />
         <span class="header__title">Chamada Fácil</span>
       </div>
 
@@ -25,6 +24,8 @@
           <li><a href="#problema" class="nav__link">Problema</a></li>
           <li><a href="#solucao" class="nav__link">Solução</a></li>
           <li><a href="#como-funciona" class="nav__link">Como funciona</a></li>
+          <li><a href="#resultados" class="nav__link">Resultados</a></li>
+          <li><a href="#demonstracao" class="nav__link">Demo</a></li>
           <li><a href="#status" class="nav__link">Status</a></li>
           <li>
             <a href="https://app.chamadafacil.net.br" class="nav__link nav__cta" target="_blank" rel="noopener">
@@ -33,6 +34,9 @@
           </li>
         </ul>
       </nav>
+      <a href="https://app.chamadafacil.net.br" class="header__mobile-cta" target="_blank" rel="noopener">
+        Abrir App
+      </a>
     </div>
   </header>
 
@@ -43,12 +47,16 @@
         <h1 class="hero__title">Chamada de alunos simples, rápida e sem papel. <br> <span>Em breve para Android e
             iOS.</span></h1>
         <p class="hero__description">
-          Uma ferramenta pensada para professores que querem ganhar tempo em sala de aula.
+          Registre presenca em segundos, sem papel e sem friccao.
         </p>
         <div class="hero__actions">
-          <button class="btn btn--secondary" aria-label="Status do app">
-            Em testes com professores
-          </button>
+          <a href="https://app.chamadafacil.net.br" class="btn btn--primary" target="_blank" rel="noopener">Abrir App</a>
+          <a href="#demonstracao" class="btn btn--secondary">Ver Demo</a>
+        </div>
+        <div class="hero__badges" aria-label="Recursos principais">
+          <span class="hero__badge">Funciona offline</span>
+          <span class="hero__badge">QR reutilizavel</span>
+          <span class="hero__badge">Exportacao em PDF/CSV</span>
         </div>
         <p class="hero__footnote">
           <small>Estamos testando com professores reais. Em breve disponível para todos.</small>
@@ -56,6 +64,26 @@
       </div>
     </section>
 
+    <!-- RESULTADOS SECTION -->
+    <section id="resultados" class="section section--metrics" aria-labelledby="resultados-title">
+      <div class="section__container">
+        <h2 id="resultados-title" class="section__title">Resultados esperados por aula</h2>
+        <div class="metrics__grid" role="list">
+          <article class="metric-card" role="listitem" aria-label="Tempo economizado">
+            <p class="metric-card__value">-10 min</p>
+            <p class="metric-card__label">tempo gasto com chamada</p>
+          </article>
+          <article class="metric-card" role="listitem" aria-label="Reducao de retrabalho">
+            <p class="metric-card__value">+1h</p>
+            <p class="metric-card__label">ganho semanal por turma</p>
+          </article>
+          <article class="metric-card" role="listitem" aria-label="Efetividade de registro">
+            <p class="metric-card__value">100%</p>
+            <p class="metric-card__label">registro digital da presenca</p>
+          </article>
+        </div>
+      </div>
+    </section>
     <!-- PROBLEMA SECTION -->
     <section id="problema" class="section section--light" aria-labelledby="problema-title">
       <div class="section__container">
@@ -193,6 +221,94 @@
       </div>
     </section>
 
+    <!-- DEMONSTRACAO SECTION -->
+    <section id="demonstracao" class="section section--white" aria-labelledby="demo-title">
+      <div class="section__container">
+        <h2 id="demo-title" class="section__title">Demonstracao em tempo real</h2>
+        <p class="section__description">
+          Veja uma simulacao de escaneamento de QR Code e registro de presenca.
+        </p>
+
+        <article class="demo-scan" aria-label="Simulacao do processo de chamada">
+          <div class="demo-scan__panel demo-scan__panel--list">
+            <div class="demo-scan__header">
+              <h3 class="demo-scan__title">Turma 7A - Matematica</h3>
+              <p class="demo-scan__meta">
+                Presentes: <strong>2</strong> / 5
+              </p>
+            </div>
+            <ul class="demo-scan__students" id="demoStudentList">
+              <li class="demo-student demo-student--present">
+                <span class="demo-student__name">Ana Souza</span>
+                <span class="demo-student__status">Presente</span>
+              </li>
+              <li class="demo-student demo-student--present">
+                <span class="demo-student__name">Caio Ramos</span>
+                <span class="demo-student__status">Presente</span>
+              </li>
+              <li class="demo-student" data-demo-queue="true">
+                <span class="demo-student__name">Bruna Lima</span>
+                <span class="demo-student__status">Aguardando</span>
+              </li>
+              <li class="demo-student" data-demo-queue="true">
+                <span class="demo-student__name">Gabriel Melo</span>
+                <span class="demo-student__status">Aguardando</span>
+              </li>
+              <li class="demo-student" data-demo-queue="true">
+                <span class="demo-student__name">Lia Costa</span>
+                <span class="demo-student__status">Aguardando</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="demo-scan__panel demo-scan__panel--scanner">
+            <div class="demo-phone" aria-hidden="true">
+              <div class="demo-phone__notch"></div>
+              <div class="demo-phone__screen">
+                <div class="demo-phone__flash" id="demoPhoneFlash" aria-hidden="true"></div>
+                <div class="demo-app-top">
+                  <span class="demo-app-top__back">‹</span>
+                  <strong>Scanner</strong>
+                  <span class="demo-app-top__menu">≡</span>
+                </div>
+
+                <div class="demo-class-card">
+                  <h4>Turma 7A - Matematica</h4>
+                  <p>07/03/2026 - 1o horario</p>
+                  <div class="demo-class-card__count">Presencas: <strong id="demoPresentCount">2</strong></div>
+                </div>
+
+                <div class="demo-camera-box">
+                  <div class="demo-qr">
+                    <video class="demo-qr__video" autoplay muted loop playsinline preload="metadata">
+                      <source src="assets/demo-camera-loop.webm" type="video/webm">
+                      <source src="assets/demo-camera-loop.mp4" type="video/mp4">
+                    </video>
+                    <div class="demo-qr__grid"></div>
+                    <div class="demo-qr__line"></div>
+                  </div>
+                </div>
+
+                <div class="demo-actions">
+                  <button class="demo-btn demo-btn--ghost" type="button">Alternar</button>
+                  <button class="demo-btn demo-btn--ok" type="button">Finalizar</button>
+                </div>
+
+                <div class="demo-status">
+                  <span class="demo-status__dot" id="demoStatusDot"></span>
+                  <span id="demoScanStatus">Lendo QR Code...</span>
+                </div>
+
+                <p class="demo-scan__result">
+                  Escaneando: <strong id="demoCurrentName">Bruna Lima</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <!-- STATUS SECTION -->
     <section id="status" class="section section--white" aria-labelledby="status-title">
       <div class="section__container">
@@ -212,6 +328,9 @@
       </div>
     </section>
   </main>
+  <a href="https://app.chamadafacil.net.br" class="mobile-sticky-cta" target="_blank" rel="noopener">
+    Abrir App
+  </a>
 
   <footer class="footer" role="contentinfo" aria-label="Rodapé do site">
     <div class="footer__container">
@@ -239,8 +358,66 @@
 
     btn.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }); 
+    });
+
+    const demoRoot = document.querySelector('.demo-scan');
+    const demoQueue = Array.from(document.querySelectorAll('[data-demo-queue="true"]'));
+    const demoCount = document.getElementById('demoPresentCount');
+    const demoCurrentName = document.getElementById('demoCurrentName');
+    const demoScanStatus = document.getElementById('demoScanStatus');
+    const demoStatusDot = document.getElementById('demoStatusDot');
+    const demoPhoneFlash = document.getElementById('demoPhoneFlash');
+    const demoVideo = document.querySelector('.demo-qr__video');
+    let demoIndex = 0;
+
+    if (demoVideo && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      demoVideo.pause();
+    }
+
+    if (demoQueue.length && demoCount && demoCurrentName && demoScanStatus && demoStatusDot && demoRoot && demoPhoneFlash) {
+      setInterval(() => {
+        if (demoIndex >= demoQueue.length) {
+          demoQueue.forEach((item) => {
+            item.classList.remove('demo-student--present');
+            item.classList.remove('demo-student--just-confirmed');
+            item.querySelector('.demo-student__status').textContent = 'Aguardando';
+          });
+          demoIndex = 0;
+          demoCount.textContent = '2';
+        }
+
+        const item = demoQueue[demoIndex];
+        const name = item.querySelector('.demo-student__name').textContent;
+        demoCurrentName.textContent = name;
+        demoScanStatus.textContent = 'Lendo QR Code...';
+        demoStatusDot.classList.remove('demo-status__dot--ok');
+        demoRoot.classList.remove('demo-scan--confirmed');
+        demoPhoneFlash.classList.remove('demo-phone__flash--active');
+
+        setTimeout(() => {
+          demoScanStatus.textContent = 'Confirmando presenca...';
+        }, 520);
+
+        setTimeout(() => {
+          item.classList.add('demo-student--present');
+          item.classList.add('demo-student--just-confirmed');
+          item.querySelector('.demo-student__status').textContent = 'Presente';
+          demoCount.textContent = String(3 + demoIndex);
+          demoScanStatus.textContent = 'Presenca registrada';
+          demoStatusDot.classList.add('demo-status__dot--ok');
+          demoRoot.classList.add('demo-scan--confirmed');
+          demoPhoneFlash.classList.add('demo-phone__flash--active');
+          setTimeout(() => {
+            item.classList.remove('demo-student--just-confirmed');
+            demoPhoneFlash.classList.remove('demo-phone__flash--active');
+          }, 520);
+          demoIndex += 1;
+        }, 900);
+      }, 2400);
+    }
   </script>
 </body>
 
 </html>
+
+
