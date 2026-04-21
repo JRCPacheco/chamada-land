@@ -1,8 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="scroll-smooth" lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;">
   <title>Chamada Fácil Free | Chamada escolar simples, rápida e offline</title>
   <meta
     name="description"
@@ -113,12 +114,20 @@
         <a class="font-headline text-sm font-semibold tracking-tight text-slate-600 transition-colors duration-200 hover:text-blue-800" href="#versao-free">Versão Free</a>
         <a class="font-headline text-sm font-semibold tracking-tight text-slate-600 transition-colors duration-200 hover:text-blue-800" href="#proximas-versoes">Versão Pro</a>
       </div>
-      <a
-        class="rounded-xl bg-primary px-6 py-2.5 font-headline text-sm font-semibold text-white transition-transform active:scale-95 hover:bg-primary-container"
-        href="#downloads"
-      >
-        Baixar Agora
-      </a>
+      <div class="flex items-center gap-4">
+        <a
+          class="hidden rounded-xl border-2 border-primary/20 px-5 py-2 font-headline text-sm font-bold text-primary transition-all hover:border-primary hover:bg-primary/5 sm:block"
+          href="portal.html"
+        >
+          Entrar
+        </a>
+        <a
+          class="rounded-xl bg-primary px-6 py-2.5 font-headline text-sm font-semibold text-white transition-transform active:scale-95 hover:bg-primary-container"
+          href="#downloads"
+        >
+          Baixar Agora
+        </a>
+      </div>
     </div>
   </nav>
 
@@ -394,6 +403,13 @@
             <li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">radio_button_checked</span><span>Mais controle para a rotina escolar</span></li>
             <li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">radio_button_checked</span><span>Evoluções voltadas a quem precisa ir além do essencial</span></li>
           </ul>
+          <a
+            class="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-4 font-headline text-base font-bold text-white transition-all active:scale-[0.98] hover:bg-blue-800"
+            href="portal.html"
+          >
+            Conhecer Portal Pro
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </a>
         </div>
       </div>
     </div>
