@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;">
   <title>Chamada Fácil Free | Chamada escolar simples, rápida e offline</title>
   <meta
     name="description"
@@ -97,27 +96,37 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
     }
+    
+    /* Utility classes */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   </style>
 </head>
 <body class="bg-surface font-body text-on-surface">
-  <nav class="fixed top-0 z-50 w-full bg-white/80 shadow-sm glass-nav">
-    <div class="mx-auto flex w-full max-w-7xl items-center justify-between px-8 py-5">
+  <nav id="navbar" class="fixed top-0 z-50 w-full transition-all duration-300">
+    <div class="mx-auto flex w-full max-w-7xl items-center justify-between px-8 py-5 transition-all duration-300" id="nav-container">
             <a class="flex items-center gap-3" href="#home" aria-label="Chamada Fácil">
-        <img class="h-11 w-11" src="assets/logo1024.svg" alt="Logo do Chamada Fácil" />
-        <span class="font-headline text-2xl font-black tracking-tighter">
-          <span class="text-blue-900">Chamada</span><span class="text-secondary"> Fácil</span>
+        <img id="nav-logo" class="h-11 w-11 transition-all duration-300" src="assets/logo1024wt.svg" alt="Logo do Chamada Fácil" />
+        <span class="font-headline text-2xl font-black tracking-tighter" id="logo-text">
+          <span class="text-white transition-colors" id="logo-part-1">Chamada</span><span class="text-secondary"> Fácil</span>
         </span>
       </a>
-      <div class="hidden items-center gap-8 md:flex">
-        <a class="border-b-2 border-blue-700 pb-1 font-headline text-sm font-semibold tracking-tight text-blue-700" href="#home">Home</a>
-        <a class="font-headline text-sm font-semibold tracking-tight text-slate-600 transition-colors duration-200 hover:text-blue-800" href="#como-funciona">Como funciona</a>
-        <a class="font-headline text-sm font-semibold tracking-tight text-slate-600 transition-colors duration-200 hover:text-blue-800" href="#versao-free">Versão Free</a>
-        <a class="font-headline text-sm font-semibold tracking-tight text-slate-600 transition-colors duration-200 hover:text-blue-800" href="#proximas-versoes">Versão Pro</a>
+      <div class="hidden items-center gap-8 md:flex" id="nav-links">
+        <a class="nav-link border-b-2 border-white pb-1 font-headline text-sm font-semibold tracking-tight text-white transition-all" href="#home">Home</a>
+        <a class="nav-link font-headline text-sm font-semibold tracking-tight text-white/80 transition-all hover:text-white" href="#como-funciona">Como funciona</a>
+        <a class="nav-link font-headline text-sm font-semibold tracking-tight text-white/80 transition-all hover:text-white" href="#versao-free">Versão Free</a>
+        <a class="nav-link font-headline text-sm font-semibold tracking-tight text-white/80 transition-all hover:text-white" href="#proximas-versoes">Versão Pro</a>
       </div>
       <div class="flex items-center gap-4">
         <a
-          class="hidden rounded-xl border-2 border-primary/20 px-5 py-2 font-headline text-sm font-bold text-primary transition-all hover:border-primary hover:bg-primary/5 sm:block"
-          href="portal.html"
+          id="btn-entrar"
+          class="hidden rounded-xl border-2 border-white/30 px-5 py-2 font-headline text-sm font-bold text-white transition-all hover:border-white hover:bg-white/10 sm:block"
+          href="login.html"
         >
           Entrar
         </a>
@@ -203,37 +212,180 @@
 
   <section class="bg-surface py-24" id="como-funciona">
     <div class="mx-auto max-w-7xl px-8">
-      <div class="mb-20 text-center">
-        <h2 class="mb-4 font-headline text-4xl font-extrabold text-primary">Como funciona em 3 passos</h2>
+      <div class="mb-16 text-center">
+        <h2 class="mb-4 font-headline text-4xl font-extrabold text-primary">Como funciona na prática</h2>
         <p class="mx-auto max-w-2xl text-on-surface-variant">
-          Do cadastro à chamada, o processo foi pensado para ser simples, rápido e prático no dia a dia do professor.
+          Um guia rápido para você dominar o Chamada Fácil e transformar sua rotina em sala de aula em 5 passos simples.
         </p>
       </div>
-      <div class="grid grid-cols-1 gap-12 md:grid-cols-3">
-        <div class="group">
-          <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container-low transition-colors group-hover:bg-primary">
-            <span class="material-symbols-outlined text-3xl text-primary group-hover:text-white">settings_account_box</span>
+
+      <!-- Carousel Container -->
+      <div class="relative group">
+        <div 
+          id="carousel-steps" 
+          class="flex gap-6 overflow-x-auto pb-12 scroll-smooth no-scrollbar snap-x snap-mandatory px-4"
+        >
+          <!-- Passo 1 -->
+          <div class="min-w-full md:min-w-[45%] lg:min-w-[30%] snap-center">
+            <div class="h-full rounded-3xl border border-outline-variant/10 bg-white p-8 shadow-sm transition-all hover:shadow-md">
+              <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-3xl font-bold">home_work</span>
+              </div>
+              <span class="mb-2 block text-xs font-bold uppercase tracking-widest text-primary/50">Passo 01</span>
+              <h3 class="mb-3 font-headline text-xl font-extrabold text-primary">Cadastrar Escola</h3>
+              <p class="text-on-surface-variant leading-relaxed">
+                Configure os dados básicos da sua escola. Na versão Pro, você poderá gerenciar múltiplas unidades.
+              </p>
+            </div>
           </div>
-          <h3 class="mb-3 font-headline text-xl font-bold text-primary">1. Cadastro e configuração</h3>
-          <p class="leading-relaxed text-on-surface-variant">Cadastre sua turma e adicione os alunos no app.</p>
-        </div>
-        <div class="group">
-          <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container-low transition-colors group-hover:bg-primary">
-            <span class="material-symbols-outlined text-3xl text-primary group-hover:text-white">qr_code_2</span>
+
+          <!-- Passo 2 -->
+          <div class="min-w-full md:min-w-[45%] lg:min-w-[30%] snap-center">
+            <div class="h-full rounded-3xl border border-outline-variant/10 bg-white p-8 shadow-sm transition-all hover:shadow-md">
+              <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-3xl font-bold">groups</span>
+              </div>
+              <span class="mb-2 block text-xs font-bold uppercase tracking-widest text-primary/50">Passo 02</span>
+              <h3 class="mb-3 font-headline text-xl font-extrabold text-primary">Criar Turmas</h3>
+              <p class="text-on-surface-variant leading-relaxed">
+                Organize seus alunos por séries, turnos ou disciplinas para um controle total da sua carga horária.
+              </p>
+            </div>
           </div>
-          <h3 class="mb-3 font-headline text-xl font-bold text-primary">2. Geração de QR Codes</h3>
-          <p class="leading-relaxed text-on-surface-variant">Crie os QR Codes dos alunos para agilizar a chamada.</p>
-        </div>
-        <div class="group">
-          <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container-low transition-colors group-hover:bg-primary">
-            <span class="material-symbols-outlined text-3xl text-primary group-hover:text-white">offline_pin</span>
+
+          <!-- Passo 3 -->
+          <div class="min-w-full md:min-w-[45%] lg:min-w-[30%] snap-center">
+            <div class="h-full rounded-3xl border border-outline-variant/10 bg-white p-8 shadow-sm transition-all hover:shadow-md">
+              <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-3xl font-bold">person_add</span>
+              </div>
+              <span class="mb-2 block text-xs font-bold uppercase tracking-widest text-primary/50">Passo 03</span>
+              <h3 class="mb-3 font-headline text-xl font-extrabold text-primary">Vincular Alunos</h3>
+              <p class="text-on-surface-variant leading-relaxed">
+                Importe sua lista ou adicione um a um. O sistema gera automaticamente os QR Codes individuais.
+              </p>
+            </div>
           </div>
-          <h3 class="mb-3 font-headline text-xl font-bold text-primary">3. Registro instantâneo</h3>
-          <p class="leading-relaxed text-on-surface-variant">Escaneie os códigos e registre a presença em segundos, mesmo offline.</p>
+
+          <!-- Passo 4 -->
+          <div class="min-w-full md:min-w-[45%] lg:min-w-[30%] snap-center">
+            <div class="h-full rounded-3xl border border-outline-variant/10 bg-white p-8 shadow-sm transition-all hover:shadow-md">
+              <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-3xl font-bold">qr_code_scanner</span>
+              </div>
+              <span class="mb-2 block text-xs font-bold uppercase tracking-widest text-primary/50">Passo 04</span>
+              <h3 class="mb-3 font-headline text-xl font-extrabold text-primary">Ativar Scanner</h3>
+              <p class="text-on-surface-variant leading-relaxed">
+                Abra o leitor no app. É rápido, intuitivo e funciona mesmo se a sala de aula não tiver internet.
+              </p>
+            </div>
+          </div>
+
+          <!-- Passo 5 -->
+          <div class="min-w-full md:min-w-[45%] lg:min-w-[30%] snap-center">
+            <div class="h-full rounded-3xl border border-outline-variant/10 bg-white p-8 shadow-sm transition-all hover:shadow-md">
+              <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10 text-on-secondary-fixed-variant">
+                <span class="material-symbols-outlined text-3xl font-bold">check_circle</span>
+              </div>
+              <span class="mb-2 block text-xs font-bold uppercase tracking-widest text-secondary/60">Passo 05</span>
+              <h3 class="mb-3 font-headline text-xl font-extrabold text-primary">Fazer a Chamada</h3>
+              <p class="text-on-surface-variant leading-relaxed">
+                Pronto! Aponte para o código do aluno e o registro é feito instantaneamente com feedback visual.
+              </p>
+            </div>
+          </div>
         </div>
+
+        <!-- Navigation Buttons -->
+        <button 
+          onclick="document.getElementById('carousel-steps').scrollBy({left: -350, behavior: 'smooth'})"
+          class="absolute -left-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-xl border border-slate-100 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <button 
+          onclick="document.getElementById('carousel-steps').scrollBy({left: 350, behavior: 'smooth'})"
+          class="absolute -right-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-xl border border-slate-100 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+
+      <!-- Scroll indicator (dots) -->
+      <div class="mt-4 flex justify-center gap-2" id="carousel-dots">
+        <div class="h-1.5 w-4 rounded-full bg-primary/60 transition-all duration-300"></div>
+        <div class="h-1.5 w-1.5 rounded-full bg-primary/20 transition-all duration-300"></div>
+        <div class="h-1.5 w-1.5 rounded-full bg-primary/20 transition-all duration-300"></div>
+        <div class="h-1.5 w-1.5 rounded-full bg-primary/20 transition-all duration-300"></div>
+        <div class="h-1.5 w-1.5 rounded-full bg-primary/20 transition-all duration-300"></div>
       </div>
     </div>
   </section>
+
+  <script>
+    const navbar = document.getElementById('navbar');
+    const navContainer = document.getElementById('nav-container');
+    const navLogo = document.getElementById('nav-logo');
+    const logoPart1 = document.getElementById('logo-part-1');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const btnEntrar = document.getElementById('btn-entrar');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('bg-white/95', 'shadow-md', 'backdrop-blur-md');
+        navContainer.classList.remove('py-5');
+        navContainer.classList.add('py-3');
+        navLogo.src = 'assets/logo1024.svg';
+        logoPart1.classList.replace('text-white', 'text-blue-900');
+        btnEntrar.classList.replace('text-white', 'text-primary');
+        btnEntrar.classList.replace('border-white/30', 'border-primary/20');
+        navLinks.forEach(link => {
+          link.classList.replace('text-white/80', 'text-slate-600');
+          link.classList.replace('text-white', 'text-blue-700');
+          link.classList.replace('border-white', 'border-blue-700');
+        });
+      } else {
+        navbar.classList.remove('bg-white/95', 'shadow-md', 'backdrop-blur-md');
+        navContainer.classList.remove('py-3');
+        navContainer.classList.add('py-5');
+        navLogo.src = 'assets/logo1024wt.svg';
+        logoPart1.classList.replace('text-blue-900', 'text-white');
+        btnEntrar.classList.replace('text-primary', 'text-white');
+        btnEntrar.classList.replace('border-primary/20', 'border-white/30');
+        navLinks.forEach(link => {
+          link.classList.replace('text-slate-600', 'text-white/80');
+          link.classList.replace('text-blue-700', 'text-white');
+          link.classList.replace('border-blue-700', 'border-white');
+        });
+      }
+    });
+
+    // Carousel script
+    document.addEventListener('DOMContentLoaded', () => {
+      const carousel = document.getElementById('carousel-steps');
+      const dots = document.querySelectorAll('#carousel-dots div');
+
+      if (carousel && dots.length > 0) {
+        carousel.addEventListener('scroll', () => {
+          const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+          if (maxScroll <= 0) return;
+          
+          const scrollPercentage = carousel.scrollLeft / maxScroll;
+          const index = Math.round(scrollPercentage * (dots.length - 1));
+          
+          dots.forEach((dot, i) => {
+            if (i === index) {
+              dot.style.width = '1rem';
+              dot.style.backgroundColor = 'rgba(0, 64, 128, 0.6)';
+            } else {
+              dot.style.width = '0.375rem';
+              dot.style.backgroundColor = 'rgba(0, 64, 128, 0.2)';
+            }
+          });
+        });
+      }
+    });
+  </script>
 
 
   <section class="bg-white py-24">
@@ -396,20 +548,43 @@
             </div>
             <span class="rounded-full bg-primary/8 px-4 py-1.5 text-sm font-bold text-primary">Próximo nível</span>
           </div>
-          <ul class="space-y-4 text-on-surface-variant">
-            <li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">radio_button_checked</span><span>Mais alcance para escolas e turmas</span></li>
-            <li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">radio_button_checked</span><span>Recursos avançados de organização</span></li>
-            <li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">radio_button_checked</span><span>Fluxos pensados para uso mais robusto</span></li>
-            <li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">radio_button_checked</span><span>Mais controle para a rotina escolar</span></li>
-            <li class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">radio_button_checked</span><span>Evoluções voltadas a quem precisa ir além do essencial</span></li>
+          <ul class="space-y-5 text-on-surface-variant">
+            <li class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-primary mt-0.5">radio_button_checked</span>
+              <div>
+                <span class="font-bold block">Gestão Multiescolas</span>
+                <p class="text-sm opacity-80">Cadastre e gerencie múltiplas instituições e turmas sem limites.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-primary mt-0.5">radio_button_checked</span>
+              <div>
+                <span class="font-bold block">Sincronização em Nuvem</span>
+                <p class="text-sm opacity-80">Seus dados salvos com segurança e acessíveis de qualquer dispositivo em tempo real.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-primary mt-0.5">radio_button_checked</span>
+              <div>
+                <span class="font-bold block">Relatórios Avançados (PDF/Excel)</span>
+                <p class="text-sm opacity-80">Gere relatórios de frequência e desempenho prontos para impressão ou envio institucional.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-primary mt-0.5">radio_button_checked</span>
+              <div>
+                <span class="font-bold block">Portal de Administração Web</span>
+                <p class="text-sm opacity-80">Interface exclusiva para visualização e gestão de chamadas via navegador.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-primary mt-0.5">radio_button_checked</span>
+              <div>
+                <span class="font-bold block">Suporte Prioritário</span>
+                <p class="text-sm opacity-80">Atendimento exclusivo para garantir que sua rotina escolar nunca pare.</p>
+              </div>
+            </li>
           </ul>
-          <a
-            class="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-4 font-headline text-base font-bold text-white transition-all active:scale-[0.98] hover:bg-blue-800"
-            href="portal.html"
-          >
-            Conhecer Portal Pro
-            <span class="material-symbols-outlined">arrow_forward</span>
-          </a>
         </div>
       </div>
     </div>
