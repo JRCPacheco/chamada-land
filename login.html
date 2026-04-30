@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://chamadafacil-api.local http://127.0.0.1:5500 http://localhost:5500 https://api.chamadafacil.net.br https://pro.chamadafacil.net.br;">
     <title>Acesso Pro | Chamada Fácil</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -332,29 +332,31 @@
 
         <div class="switcher">
             <button class="switcher-btn active" onclick="switchMode('professor')">Professor</button>
-            <button class="switcher-btn" onclick="switchMode('escola')">Gestão</button>
+            <button class="switcher-btn" onclick="switchMode('escola')">Escola</button>
             <div class="switcher-indicator" id="indicator"></div>
         </div>
 
         <div class="forms-wrapper">
             <!-- Professor Form -->
             <div id="professor-form" class="form-container active">
-                <button class="btn-google">
+                <button class="btn-google" type="button" onclick="window.location.href='professor/index.html'">
                     <img src="assets/google_2025.svg" alt="">
                     Entrar com Google
                 </button>
 
                 <div class="divider">ou use seu e-mail</div>
 
-                <form action="#">
+                <p style="margin:-0.5rem 0 1.25rem; font-size:0.8125rem; color: var(--text-muted); text-align:center;">Acesso do professor em modo de testes. Google e painel levam ao mesmo portal nesta fase.</p>
+
+                <form onsubmit="return goToPortal('professor', event)">
                     <div class="input-group">
                         <label for="prof-email">E-mail</label>
-                        <input type="email" id="prof-email" placeholder="professor@exemplo.com.br" required>
+                        <input type="email" id="prof-email" placeholder="professor@exemplo.com.br">
                     </div>
                     <div class="input-group">
                         <label for="prof-pass">Senha</label>
                         <div class="input-wrapper">
-                            <input type="password" id="prof-pass" placeholder="••••••••" required>
+                            <input type="password" id="prof-pass" placeholder="••••••••">
                             <button type="button" class="toggle-pass" onclick="togglePassword('prof-pass')">VER</button>
                         </div>
                     </div>
@@ -364,7 +366,7 @@
 
             <!-- School Form -->
             <div id="escola-form" class="form-container">
-                <form action="#">
+                <form id="school-login-form">
                     <div class="input-group">
                         <label for="esc-user">Usuário ou E-mail</label>
                         <input type="text" id="esc-user" placeholder="gestor_escola" required>
@@ -376,8 +378,9 @@
                             <button type="button" class="toggle-pass" onclick="togglePassword('esc-pass')">VER</button>
                         </div>
                     </div>
-                    <button type="submit" class="btn-submit">Acessar Gestão</button>
+                    <button id="school-submit-btn" type="submit" class="btn-submit">Acessar Gestão</button>
                 </form>
+                <p id="school-login-message" style="margin-top:1rem; min-height:1.25rem; font-size:0.8125rem; text-align:center; color: var(--text-muted);"></p>
             </div>
         </div>
 
@@ -394,6 +397,22 @@
     </div>
 
     <script>
+        const API_BASE = resolveApiBase();
+        const SCHOOL_STORAGE_KEY = 'cf_portal_school_auth';
+
+        function resolveApiBase() {
+            const params = new URLSearchParams(window.location.search);
+            const override = params.get('apiBase') || localStorage.getItem('cf_api_base_override');
+            if (override) return override.replace(/\/$/, '');
+
+            const host = window.location.hostname;
+            if (host === 'localhost' || host === '127.0.0.1') {
+                return 'http://chamadafacil-api.local';
+            }
+
+            return window.location.origin + '/api';
+        }
+
         function switchMode(mode) {
             const profBtn = document.querySelectorAll('.switcher-btn')[0];
             const escBtn = document.querySelectorAll('.switcher-btn')[1];
@@ -425,14 +444,116 @@
             }
         }
 
-        // Auto-select tab based on URL param
+        function setSchoolMessage(text, type = 'info') {
+            const el = document.getElementById('school-login-message');
+            if (!el) return;
+            const colors = {
+                info: 'var(--text-muted)',
+                success: 'var(--secondary)',
+                error: '#b91c1c'
+            };
+            el.textContent = text;
+            el.style.color = colors[type] || colors.info;
+            el.style.fontWeight = text ? '600' : '400';
+        }
+
+        async function apiRequest(path, options = {}) {
+            const response = await fetch(`${API_BASE}${path}`, {
+                method: options.method || 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    ...(options.body ? { 'Content-Type': 'application/json' } : {})
+                },
+                body: options.body ? JSON.stringify(options.body) : undefined
+            });
+
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data?.message || data?.error || `HTTP ${response.status}`);
+            }
+            return data;
+        }
+
+        function goToPortal(mode, event) {
+            if (event) event.preventDefault();
+
+            if (mode === 'professor') {
+                const email = document.getElementById('prof-email').value.trim();
+                const target = new URL('professor/index.html', window.location.href);
+                if (email) target.searchParams.set('email', email);
+                window.location.href = target.toString();
+                return false;
+            }
+
+            return false;
+        }
+
+        async function loginSchool(event) {
+            event.preventDefault();
+            const identifier = document.getElementById('esc-user').value.trim();
+            const password = document.getElementById('esc-pass').value;
+            const submitButton = document.getElementById('school-submit-btn');
+
+            if (!identifier || !password) {
+                setSchoolMessage('Informe usuário e senha para continuar.', 'error');
+                return;
+            }
+
+            try {
+                setSchoolMessage('Validando acesso institucional...', 'info');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Validando...';
+
+                const payload = await apiRequest('/auth/dev-school-login', {
+                    method: 'POST',
+                    body: {
+                        identifier,
+                        password,
+                        organization_name: 'Escola Dev Chamada Fácil',
+                        role: 'manager'
+                    }
+                });
+
+                localStorage.setItem(SCHOOL_STORAGE_KEY, JSON.stringify({
+                    token: payload.token || '',
+                    user: payload.user || null,
+                    organization: payload.organization || null,
+                    membership: payload.membership || null,
+                    subscription: payload.subscription || null
+                }));
+
+                setSchoolMessage(`Acesso liberado para ${payload.organization?.name || 'a escola'}. Redirecionando...`, 'success');
+                const target = new URL('escola/index.html', window.location.href);
+                target.searchParams.set('user', identifier);
+                window.location.href = target.toString();
+            } catch (error) {
+                setSchoolMessage(error.message || 'Não foi possível autenticar o acesso institucional.', 'error');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Acessar Gestão';
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const env = urlParams.get('env');
-            if (env === 'escola') {
+            const mode = urlParams.get('mode') || urlParams.get('env');
+            const hintedUser = urlParams.get('user') || '';
+            document.getElementById('esc-user').value = hintedUser;
+
+            if (mode === 'escola') {
                 switchMode('escola');
+            } else {
+                switchMode('professor');
             }
+
+            document.getElementById('school-login-form').addEventListener('submit', loginSchool);
         });
     </script>
 </body>
 </html>
+
+
+
+
+
+
