@@ -1062,8 +1062,8 @@
                     <h4>Relatório Mensal de Chamadas</h4>
                     <p class="diary-note">Exporta o Diário de Classe do mês selecionado, com a grade mensal completa e os totais por aluno.</p>
                     <div class="report-actions">
-                        <button id="btn-export-diary-csv" class="btn btn-secondary btn-inline" type="button">Exportar Plan</button>
-                        <button id="btn-export-diary-pdf" class="btn btn-secondary btn-inline" type="button">Exportar PDF</button>
+                        <button id="btn-export-diary-csv" class="btn btn-secondary btn-inline" type="button">Baixar planilha</button>
+                        <button id="btn-export-diary-pdf" class="btn btn-secondary btn-inline" type="button">Baixar relatório mensal (PDF)</button>
                     </div>
                 </section>
 
@@ -1071,7 +1071,7 @@
                     <h4>Lista de Presença</h4>
                     <p class="diary-note">Gera a versão para assinatura em mesa, separada do relatório mensal. Ideal para impressão e conferência.</p>
                     <div class="report-actions">
-                        <button id="btn-print-signature" class="btn btn-primary btn-inline" type="button">Imprimir lista</button>
+                        <button id="btn-print-signature" class="btn btn-primary btn-inline" type="button">Imprimir lista de presença</button>
                     </div>
                 </section>
 
@@ -1515,62 +1515,185 @@
         }
 
         function buildDiaryModel(group, month, sessions, details) {
-            const [year, monthNumber] = month.split('-').map(Number);
-            const totalDays = new Date(year, monthNumber, 0).getDate();
-            const columns = Array.from({ length: totalDays }, (_, index) => {
-                const day = index + 1;
-                return {
-                    id: day,
-                    label: String(day).padStart(2, '0'),
-                    slot: '',
-                    date: `${month}-${String(day).padStart(2, '0')}`
-                };
-            });
+            const [ano, mes] = month.split('-').map(Number);
+            const mesPad = String(mes).padStart(2, '0');
+            const diasNoMes = new Date(ano, mes, 0).getDate();
+            const diasDoMes = Array.from({ length: diasNoMes }, (_, i) => String(i + 1).padStart(2, '0'));
+            const segundoHorarioAtivo = sessions.some((session) => Number(session.slot || 1) === 2);
+            const normalizarStatus = (status) => (status === 'present' || status === 'P' || !status) ? 'P' : 'F';
 
-            const studentsMap = new Map();
-
+            const rawStudents = new Map();
             details.forEach((detail) => {
-                const sessionDate = detail?.session?.attendance_date || '';
-                const sessionDay = Number((sessionDate || '').slice(-2));
                 (detail.students || []).forEach((student) => {
                     const key = `${student.student_name || 'Aluno'}::${student.enrollment_code || ''}`;
-                    if (!studentsMap.has(key)) {
-                        studentsMap.set(key, {
+                    if (!rawStudents.has(key)) {
+                        rawStudents.set(key, {
+                            id: key,
                             key,
+                            nome: student.student_name || 'Aluno',
                             name: student.student_name || 'Aluno',
+                            matricula: student.enrollment_code || '',
                             enrollment: student.enrollment_code || '',
-                            statuses: {},
-                            present: 0,
-                            absent: 0
+                            numeroChamada: ''
                         });
                     }
-                    const entry = studentsMap.get(key);
-                    const status = student.status === 'present' ? 'P' : 'F';
-                    entry.statuses[sessionDay] = status;
-                    if (status === 'P') entry.present += 1;
-                    else entry.absent += 1;
                 });
             });
 
-            const students = Array.from(studentsMap.values())
-                .map((student) => ({
-                    ...student,
-                    frequency: columns.length ? Math.round((student.present / columns.length) * 1000) / 10 : 0
-                }))
-                .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+            const alunosOrdenados = Array.from(rawStudents.values())
+                .sort((a, b) => {
+                    const ma = String(a.matricula || '');
+                    const mb = String(b.matricula || '');
+                    const byMatricula = ma.localeCompare(mb, 'pt-BR', { numeric: true });
+                    if (byMatricula !== 0) return byMatricula;
+                    return String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR');
+                })
+                .map((aluno, index) => ({
+                    ...aluno,
+                    numeroChamada: index + 1
+                }));
+
+            const criarMatriz = () => {
+                const matriz = {};
+                alunosOrdenados.forEach((aluno) => {
+                    const dias = {};
+                    diasDoMes.forEach((dia) => { dias[dia] = ''; });
+                    matriz[aluno.id] = {
+                        alunoId: aluno.id,
+                        numeroChamada: aluno.numeroChamada,
+                        nome: aluno.nome || '',
+                        matricula: aluno.matricula || '',
+                        dias,
+                        totalP: 0,
+                        totalF: 0
+                    };
+                });
+                return matriz;
+            };
+
+            const matrizHorario1 = criarMatriz();
+            const matrizHorario2 = criarMatriz();
+
+            const detalhesPorSessao = new Map(details.map((detail) => [Number(detail?.session?.id || detail?.session_id || 0), detail]));
+
+            const statusAlunoNaSessao = (detail, aluno) => {
+                const student = (detail?.students || []).find((item) =>
+                    `${item.student_name || 'Aluno'}::${item.enrollment_code || ''}` === aluno.id
+                );
+                if (!student) return 'F';
+                return normalizarStatus(student.status);
+            };
+
+            const aplicarSessaoNoDia = (matriz, detail, dia) => {
+                alunosOrdenados.forEach((aluno) => {
+                    const linha = matriz[aluno.id];
+                    if (!linha) return;
+
+                    linha.dias[dia] = 'F';
+                    linha.totalF += 1;
+                    if (statusAlunoNaSessao(detail, aluno) === 'P') {
+                        linha.dias[dia] = 'P';
+                        linha.totalP += 1;
+                        linha.totalF -= 1;
+                    }
+                });
+            };
+
+            const sessoesPorDia = {};
+            sessions.forEach((session) => {
+                const dia = String(session.attendance_date || '').slice(8, 10);
+                if (!dia || !diasDoMes.includes(dia)) return;
+                if (!sessoesPorDia[dia]) sessoesPorDia[dia] = [];
+                sessoesPorDia[dia].push(session);
+            });
+
+            diasDoMes.forEach((dia) => {
+                const sessoesDia = (sessoesPorDia[dia] || []).sort((a, b) => {
+                    const bySlot = Number(a.slot || 1) - Number(b.slot || 1);
+                    if (bySlot !== 0) return bySlot;
+                    return String(a.finished_at || a.started_at || '').localeCompare(String(b.finished_at || b.started_at || ''));
+                });
+
+                if (!sessoesDia.length) return;
+
+                const slotsDia = {};
+                sessoesDia.forEach((session) => {
+                    let slot = (Number(session.slot) === 1 || Number(session.slot) === 2) ? Number(session.slot) : null;
+                    if (!slot) slot = !slotsDia[1] ? 1 : !slotsDia[2] ? 2 : null;
+                    if (!slot || slotsDia[slot]) return;
+                    slotsDia[slot] = session;
+                });
+
+                if (slotsDia[1]) {
+                    aplicarSessaoNoDia(matrizHorario1, detalhesPorSessao.get(Number(slotsDia[1].id)), dia);
+                }
+                if (segundoHorarioAtivo && slotsDia[2]) {
+                    aplicarSessaoNoDia(matrizHorario2, detalhesPorSessao.get(Number(slotsDia[2].id)), dia);
+                }
+            });
+
+            const columns = diasDoMes.map((dia) => ({
+                id: dia,
+                label: dia,
+                slot: '',
+                date: `${month}-${dia}`
+            }));
+
+            const totalChamadasValidas = Math.max(
+                1,
+                Object.values(matrizHorario1).reduce((sum, linha) => sum + linha.totalP + linha.totalF, 0) > 0 ? sessions.filter((session) => Number(session.slot || 1) === 1).length : 0
+            ) + (segundoHorarioAtivo ? sessions.filter((session) => Number(session.slot || 1) === 2).length : 0);
+
+            const students = alunosOrdenados.map((aluno) => {
+                const l1 = matrizHorario1[aluno.id];
+                const l2 = segundoHorarioAtivo ? matrizHorario2[aluno.id] : null;
+                const present = l1.totalP + (l2 ? l2.totalP : 0);
+                const absent = l1.totalF + (l2 ? l2.totalF : 0);
+                const total = present + absent;
+                const frequency = total > 0 ? Math.round((present / total) * 1000) / 10 : 0;
+
+                const statuses = {};
+                diasDoMes.forEach((dia) => {
+                    const s1 = l1.dias[dia] || '';
+                    const s2 = l2 ? (l2.dias[dia] || '') : '';
+                    statuses[dia] = s2 ? `${s1 || '-'} / ${s2}` : s1;
+                });
+
+                return {
+                    key: aluno.id,
+                    id: aluno.id,
+                    name: aluno.nome,
+                    enrollment: aluno.matricula,
+                    matricula: aluno.matricula,
+                    numeroChamada: aluno.numeroChamada,
+                    statuses,
+                    present,
+                    absent,
+                    frequency
+                };
+            });
 
             const totalPresent = students.reduce((sum, student) => sum + student.present, 0);
-            const totalCells = students.length * columns.length;
-            const monthFrequency = totalCells ? Math.round((totalPresent / totalCells) * 1000) / 10 : 0;
+            const totalLancamentos = students.reduce((sum, student) => sum + student.present + student.absent, 0);
+            const monthFrequency = totalLancamentos ? Math.round((totalPresent / totalLancamentos) * 1000) / 10 : 0;
 
             return {
                 className: group.className,
+                turmaNome: group.className,
                 schoolName: group.schoolName,
                 schoolLogoUrl: group.schoolLogoUrl || '',
                 month,
+                ano,
+                mes,
+                mesPad,
                 columns,
+                diasDoMes,
+                alunosOrdenados,
+                matrizHorario1,
+                matrizHorario2,
+                segundoHorarioAtivo,
                 students,
-                totalSessions: columns.length,
+                totalSessions: sessions.length,
                 totalStudents: students.length,
                 monthFrequency,
                 actualSessions: sessions.length
@@ -1628,19 +1751,32 @@
         }
 
         function buildDiaryCsv(model) {
-            const headers = ['Numero', 'Aluno', 'Matricula', ...model.columns.map((column) => `${column.label} ${column.slot}`), 'Presentes', 'Faltas', 'Frequencia'];
-            const rows = model.students.map((student, index) => [
-                String(index + 1),
-                student.name,
-                student.enrollment,
-                ...model.columns.map((column) => student.statuses[column.id] || ''),
-                String(student.present),
-                String(student.absent),
-                `${String(student.frequency).replace('.', ',')}%`
-            ]);
-            return [headers, ...rows]
-                .map((row) => row.map(csvCell).join(';'))
-                .join('\r\n');
+            const montarBloco = (titulo, matriz) => {
+                const headers = ['Numero', 'Aluno', 'Matricula', ...model.diasDoMes, 'Total P', 'Total F'];
+                const rows = [titulo, headers.map(csvCell).join(';')];
+                model.alunosOrdenados.forEach((aluno) => {
+                    const linha = matriz[aluno.id];
+                    const row = [
+                        linha.numeroChamada || '',
+                        linha.nome || '',
+                        linha.matricula || '',
+                        ...model.diasDoMes.map((dia) => linha.dias[dia] || ''),
+                        linha.totalP,
+                        linha.totalF
+                    ];
+                    rows.push(row.map(csvCell).join(';'));
+                });
+                return rows;
+            };
+
+            const linhas = [
+                ...montarBloco('1º Horário', model.matrizHorario1),
+                ''
+            ];
+            if (model.segundoHorarioAtivo) {
+                linhas.push(...montarBloco('2º Horário', model.matrizHorario2), '');
+            }
+            return linhas.join('\r\n');
         }
 
         function csvCell(value) {
@@ -1696,7 +1832,7 @@
             return loadImageAsDataUrl('../assets/logo1024.svg');
         }
 
-        function buildDiaryReportCanvas(model) {
+        function buildDiaryReportCanvas(model, slot = 1) {
             const rowH = 26;
             const headerH = 30;
             const colNumero = 52;
@@ -1704,10 +1840,11 @@
             const colMatricula = 120;
             const colDia = 26;
             const colTotal = 64;
+            const matriz = slot === 2 ? model.matrizHorario2 : model.matrizHorario1;
 
-            const colsDiasW = model.columns.length * colDia;
+            const colsDiasW = model.diasDoMes.length * colDia;
             const width = colNumero + colAluno + colMatricula + colsDiasW + (colTotal * 2);
-            const height = headerH + (model.students.length * rowH);
+            const height = headerH + (model.alunosOrdenados.length * rowH);
 
             const canvas = document.createElement('canvas');
             canvas.width = width;
@@ -1739,16 +1876,17 @@
             x += colAluno;
             drawCell(x, 0, colMatricula, headerH, 'Matrícula', '#f3f4f6');
             x += colMatricula;
-            model.columns.forEach((column) => {
-                drawCell(x, 0, colDia, headerH, column.label, '#f3f4f6');
+            model.diasDoMes.forEach((dia) => {
+                drawCell(x, 0, colDia, headerH, dia, '#f3f4f6');
                 x += colDia;
             });
             drawCell(x, 0, colTotal, headerH, 'P', '#f3f4f6');
             x += colTotal;
             drawCell(x, 0, colTotal, headerH, 'F', '#f3f4f6');
 
-            model.students.forEach((student, index) => {
+            model.alunosOrdenados.forEach((aluno, index) => {
                 const y = headerH + (index * rowH);
+                const linha = matriz[aluno.id];
 
                 ctx.fillStyle = '#111827';
                 ctx.font = '12px Inter, Arial, sans-serif';
@@ -1756,18 +1894,18 @@
                 ctx.textBaseline = 'middle';
                 ctx.strokeStyle = '#d0d7de';
                 ctx.strokeRect(0, y, colNumero, rowH);
-                ctx.fillText(String(index + 1), colNumero / 2, y + rowH / 2);
+                ctx.fillText(String(linha.numeroChamada || ''), colNumero / 2, y + rowH / 2);
 
                 ctx.textAlign = 'left';
                 ctx.strokeRect(colNumero, y, colAluno, rowH);
-                ctx.fillText(String(student.name || ''), colNumero + 8, y + rowH / 2);
+                ctx.fillText(String(linha.nome || ''), colNumero + 8, y + rowH / 2);
 
                 ctx.strokeRect(colNumero + colAluno, y, colMatricula, rowH);
-                ctx.fillText(String(student.enrollment || ''), colNumero + colAluno + 8, y + rowH / 2);
+                ctx.fillText(String(linha.matricula || ''), colNumero + colAluno + 8, y + rowH / 2);
 
                 let xDia = colNumero + colAluno + colMatricula;
-                model.columns.forEach((column) => {
-                    const status = student.statuses[column.id] || '';
+                model.diasDoMes.forEach((dia) => {
+                    const status = linha.dias[dia] || '';
                     let bg = null;
                     if (status === 'P') bg = '#dff5e3';
                     if (status === 'F') bg = '#fde2e1';
@@ -1775,9 +1913,9 @@
                     xDia += colDia;
                 });
 
-                drawCell(xDia, y, colTotal, rowH, student.present);
+                drawCell(xDia, y, colTotal, rowH, linha.totalP);
                 xDia += colTotal;
-                drawCell(xDia, y, colTotal, rowH, student.absent);
+                drawCell(xDia, y, colTotal, rowH, linha.totalF);
             });
 
             return canvas;
@@ -1809,12 +1947,10 @@
             const usableH = assinaturaAreaTopY - imageTopY;
             const tabelaHeaderPx = 30;
             const tabelaRowPx = 26;
-            const canvas = buildDiaryReportCanvas(model);
-            const ratio = drawW / canvas.width;
-            const maxSlicePx = Math.max(1, Math.floor(usableH / ratio));
-            const logoData = await resolveDiaryLogoData(model);
             const professorNome = document.getElementById('login-name')?.value?.trim() || '';
-            const title = `Relatorio Mensal - ${model.className} - ${monthLabel(model.month)}`;
+            const logoDataMensal = await resolveDiaryLogoData(model);
+            const usaLogoEscola = !!model.schoolLogoUrl;
+            const nomeEscolaHeader = String(model.schoolName || '').trim();
 
             const desenharAssinatura = () => {
                 doc.setDrawColor(107, 114, 128);
@@ -1826,48 +1962,82 @@
                 }
             };
 
-            let offsetY = 0;
-            let page = 0;
-            while (offsetY < canvas.height) {
-                if (page > 0) doc.addPage('a4', 'landscape');
-
-                if (logoData) {
-                    doc.addImage(logoData, 'PNG', 10, 4, 10, 10);
-                }
-                doc.setFontSize(12);
-                doc.setFont(undefined, 'bold');
-                doc.setTextColor(33, 47, 82);
-                doc.text(model.schoolName || 'Chamada Fácil', 22, 10.1);
-                doc.setFont(undefined, 'normal');
-                doc.setTextColor(17, 24, 39);
-                doc.text(page > 0 ? `${title} (cont.)` : title, pageW - 12, headerTopY, { align: 'right' });
-
-                const remainingPx = canvas.height - offsetY;
-                let sliceH = remainingPx;
-                if (remainingPx > maxSlicePx) {
-                    if (offsetY === 0) {
-                        const rowsFit = Math.max(1, Math.floor((maxSlicePx - tabelaHeaderPx) / tabelaRowPx));
-                        sliceH = tabelaHeaderPx + (rowsFit * tabelaRowPx);
-                    } else {
-                        const rowsFit = Math.max(1, Math.floor(maxSlicePx / tabelaRowPx));
-                        sliceH = rowsFit * tabelaRowPx;
-                    }
-                    if (sliceH > remainingPx) sliceH = remainingPx;
-                }
-
-                const sliceCanvas = document.createElement('canvas');
-                sliceCanvas.width = canvas.width;
-                sliceCanvas.height = sliceH;
-                const sctx = sliceCanvas.getContext('2d');
-                sctx.drawImage(canvas, 0, offsetY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
-
-                const drawH = sliceH * ratio;
-                doc.addImage(sliceCanvas.toDataURL('image/png'), 'PNG', 10, imageTopY, drawW, drawH);
-                desenharAssinatura();
-
-                offsetY += sliceH;
-                page += 1;
+            const horarios = [{ slot: 1, titulo: '1º Horário' }];
+            if (model.segundoHorarioAtivo) {
+                horarios.push({ slot: 2, titulo: '2º Horário' });
             }
+
+            let primeiraPagina = true;
+            horarios.forEach(({ slot, titulo }) => {
+                const canvas = buildDiaryReportCanvas(model, slot);
+                const title = `Relatorio Mensal - ${model.turmaNome} - ${model.mesPad}/${model.ano} - ${titulo}`;
+                const ratio = drawW / canvas.width;
+                const maxSlicePx = Math.max(1, Math.floor(usableH / ratio));
+
+                let offsetY = 0;
+                let page = 0;
+                while (offsetY < canvas.height) {
+                    if (!primeiraPagina) {
+                        doc.addPage('a4', 'landscape');
+                    }
+
+                    if (logoDataMensal) {
+                        doc.addImage(logoDataMensal, 'PNG', 10, 4, 10, 10);
+                    }
+                    if (logoDataMensal) {
+                        doc.setFontSize(12);
+                        doc.setFont(undefined, 'bold');
+                        if (usaLogoEscola && nomeEscolaHeader) {
+                            let nomeExibicao = nomeEscolaHeader;
+                            const maxHeaderW = 92;
+                            while (doc.getTextWidth(nomeExibicao) > maxHeaderW && nomeExibicao.length > 10) {
+                                nomeExibicao = `${nomeExibicao.slice(0, -2)}...`;
+                            }
+                            doc.setTextColor(33, 47, 82);
+                            doc.text(nomeExibicao, 22, 10.1);
+                        } else {
+                            doc.setTextColor(33, 47, 82);
+                            doc.text('Chamada', 22, 10.1);
+                            doc.setTextColor(106, 191, 87);
+                            doc.text('Fácil', 42.5, 10.1);
+                        }
+                    }
+
+                    doc.setFontSize(12);
+                    doc.setFont(undefined, 'normal');
+                    doc.setTextColor(17, 24, 39);
+                    doc.text(page > 0 ? `${title} (cont.)` : title, pageW - 12, headerTopY, { align: 'right' });
+
+                    const remainingPx = canvas.height - offsetY;
+                    let sliceH = remainingPx;
+                    if (remainingPx > maxSlicePx) {
+                        if (offsetY === 0) {
+                            const rowsFit = Math.max(1, Math.floor((maxSlicePx - tabelaHeaderPx) / tabelaRowPx));
+                            sliceH = tabelaHeaderPx + (rowsFit * tabelaRowPx);
+                        } else {
+                            const rowsFit = Math.max(1, Math.floor(maxSlicePx / tabelaRowPx));
+                            sliceH = rowsFit * tabelaRowPx;
+                        }
+                        if (sliceH > remainingPx) {
+                            sliceH = remainingPx;
+                        }
+                    }
+
+                    const sliceCanvas = document.createElement('canvas');
+                    sliceCanvas.width = canvas.width;
+                    sliceCanvas.height = sliceH;
+                    const sctx = sliceCanvas.getContext('2d');
+                    sctx.drawImage(canvas, 0, offsetY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+
+                    const drawH = sliceH * ratio;
+                    doc.addImage(sliceCanvas.toDataURL('image/png'), 'PNG', 10, imageTopY, drawW, drawH);
+                    desenharAssinatura();
+
+                    offsetY += sliceH;
+                    page += 1;
+                    primeiraPagina = false;
+                }
+            });
 
             const filename = `relatorio_mensal_${slugify(model.className)}_${model.month.replace('-', '_')}.pdf`;
             if (options.openInsteadOfDownload) {
@@ -2127,3 +2297,4 @@
     </script>
 </body>
 </html>
+
