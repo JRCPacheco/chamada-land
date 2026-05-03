@@ -14,6 +14,8 @@
             --teal: #0E7490;
             --teal-deep: #0b5f78;
             --green: #6ABF57;
+            --green-soft: rgba(22,163,74,0.12);
+            --amber-soft: rgba(245, 158, 11, 0.14);
             --bg: #edf4f8;
             --surface: rgba(255,255,255,0.92);
             --surface-strong: #ffffff;
@@ -36,7 +38,7 @@
         }
 
         a { color: inherit; text-decoration: none; }
-        button, input { font: inherit; }
+        button, input, select { font: inherit; }
         button { cursor: pointer; }
 
         .page {
@@ -146,6 +148,11 @@
             align-items: start;
         }
 
+        .hero-panels {
+            display: grid;
+            gap: 18px;
+        }
+
         .card {
             border: 1px solid var(--border);
             border-radius: 26px;
@@ -161,7 +168,9 @@
 
         .login-card h2,
         .panel-card h2,
-        .detail-card h2 {
+        .detail-card h2,
+        .classes-card h2,
+        .diary-card h2 {
             margin: 0 0 6px;
             font-family: 'Manrope', sans-serif;
             font-size: 24px;
@@ -171,10 +180,16 @@
         .login-card p,
         .panel-head p,
         .detail-head p,
+        .classes-head p,
+        .diary-head p,
         .empty-state p,
         .session-meta,
         .metric-label,
-        .student-meta {
+        .student-meta,
+        .class-meta,
+        .diary-note,
+        .diary-column,
+        .export-note {
             color: var(--muted);
         }
 
@@ -186,7 +201,8 @@
 
         .field { display: grid; gap: 6px; }
         .field label { font-size: 13px; font-weight: 700; }
-        .field input {
+        .field input,
+        .field select {
             width: 100%;
             min-height: 48px;
             padding: 0 14px;
@@ -196,7 +212,8 @@
             outline: none;
         }
 
-        .field input:focus {
+        .field input:focus,
+        .field select:focus {
             border-color: rgba(14, 116, 144, 0.55);
             box-shadow: 0 0 0 4px rgba(14, 116, 144, 0.10);
         }
@@ -220,6 +237,11 @@
             color: var(--navy);
             border: 1px solid rgba(20,49,93,0.12);
         }
+        .btn-inline {
+            min-height: 38px;
+            padding: 0 14px;
+            font-size: 13px;
+        }
 
         .status-pill {
             display: inline-flex;
@@ -231,6 +253,26 @@
             background: rgba(255,255,255,0.12);
             font-size: 13px;
             font-weight: 700;
+        }
+
+        .hero-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .hero-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.10);
+            color: #eaf8fd;
+            font-weight: 700;
+            font-size: 13px;
         }
 
         .status-dot {
@@ -251,13 +293,25 @@
             margin-top: 22px;
         }
 
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 320px minmax(0, 1fr);
+            gap: 20px;
+            margin-top: 22px;
+            align-items: start;
+        }
+
         .panel-card,
-        .detail-card {
+        .detail-card,
+        .classes-card,
+        .diary-card {
             padding: 20px;
         }
 
         .panel-head,
-        .detail-head {
+        .detail-head,
+        .classes-head,
+        .diary-head {
             display: flex;
             justify-content: space-between;
             align-items: start;
@@ -304,12 +358,15 @@
             letter-spacing: 0.06em;
         }
 
-        .sessions {
+        .sessions,
+        .classes-list,
+        .diary-students {
             display: grid;
             gap: 12px;
         }
 
-        .session-item {
+        .session-item,
+        .class-item {
             display: grid;
             grid-template-columns: minmax(0, 1fr) auto;
             gap: 14px;
@@ -320,20 +377,37 @@
             background: white;
         }
 
-        .session-title-row {
+        .class-item.active {
+            background: linear-gradient(135deg, rgba(20,49,93,0.96), rgba(14,116,144,0.92));
+            color: white;
+            box-shadow: 0 16px 28px rgba(20, 49, 93, 0.20);
+        }
+
+        .class-item.active .class-meta,
+        .class-item.active .session-meta,
+        .class-item.active .class-chip,
+        .class-item.active .summary-chip {
+            color: rgba(255,255,255,0.86);
+        }
+
+        .session-title-row,
+        .class-title-row {
             display: flex;
             gap: 12px;
             justify-content: space-between;
             align-items: flex-start;
         }
 
-        .session-item h3 {
+        .session-item h3,
+        .class-item h3 {
             margin: 0 0 4px;
             font-size: 18px;
             line-height: 1.1;
         }
 
-        .session-chip {
+        .session-chip,
+        .class-chip,
+        .summary-chip {
             display: inline-flex;
             align-items: center;
             min-height: 28px;
@@ -345,7 +419,14 @@
             font-weight: 800;
         }
 
-        .session-meta {
+        .class-item.active .class-chip,
+        .class-item.active .summary-chip {
+            background: rgba(255,255,255,0.14);
+            color: white;
+        }
+
+        .session-meta,
+        .class-meta {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
@@ -353,18 +434,29 @@
             font-size: 13px;
         }
 
-        .session-actions {
+        .session-actions,
+        .class-actions,
+        .diary-actions {
             display: grid;
             gap: 8px;
             min-width: 132px;
         }
 
-        .detail-card { min-height: 580px; }
+        .detail-card,
+        .diary-card {
+            min-height: 580px;
+        }
+
+        .classes-card {
+            position: sticky;
+            top: 22px;
+            align-self: start;
+        }
 
         .empty-state {
             display: grid;
             place-items: center;
-            min-height: 360px;
+            min-height: 260px;
             text-align: center;
             padding: 20px;
             border: 1px dashed rgba(20,49,93,0.14);
@@ -372,21 +464,24 @@
             background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(241,247,250,0.86));
         }
 
-        .detail-summary {
+        .detail-summary,
+        .diary-summary {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 10px;
             margin-bottom: 16px;
         }
 
-        .detail-box {
+        .detail-box,
+        .summary-box {
             padding: 14px;
             border-radius: 18px;
             background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(239,246,249,0.90));
             border: 1px solid rgba(20,49,93,0.08);
         }
 
-        .detail-box strong {
+        .detail-box strong,
+        .summary-box strong {
             display: block;
             margin-bottom: 3px;
             font-size: 22px;
@@ -409,20 +504,17 @@
             border: 1px solid rgba(20,49,93,0.07);
         }
 
-        .student-row.present {
-            background: linear-gradient(135deg, rgba(236, 253, 245, 0.98), rgba(255,255,255,0.98));
-        }
+        .student-row.present { background: linear-gradient(135deg, rgba(236, 253, 245, 0.98), rgba(255,255,255,0.98)); }
+        .student-row.absent { background: linear-gradient(135deg, rgba(254, 242, 242, 0.98), rgba(255,255,255,0.98)); }
 
-        .student-row.absent {
-            background: linear-gradient(135deg, rgba(254, 242, 242, 0.98), rgba(255,255,255,0.98));
-        }
-
-        .student-row h4 {
+        .student-row h4,
+        .diary-student-card h4 {
             margin: 0 0 4px;
             font-size: 15px;
         }
 
-        .student-meta {
+        .student-meta,
+        .diary-student-card p {
             font-size: 12px;
         }
 
@@ -438,6 +530,234 @@
 
         .badge.present { background: rgba(22, 163, 74, 0.12); color: #166534; }
         .badge.absent { background: rgba(220, 38, 38, 0.10); color: #991b1b; }
+
+        .diary-controls {
+            display: grid;
+            grid-template-columns: 200px minmax(0, 1fr) auto;
+            gap: 12px;
+            align-items: end;
+            margin-bottom: 16px;
+        }
+
+        .diary-card {
+            overflow: hidden;
+        }
+
+        .diary-card.flash-focus {
+            box-shadow: 0 0 0 4px rgba(14, 116, 144, 0.14), var(--shadow);
+            transition: box-shadow 0.28s ease;
+        }
+
+        .diary-selected {
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(20,49,93,0.08);
+            background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(239,246,249,0.90));
+        }
+
+        .diary-selected strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+
+        .diary-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(20,49,93,0.08);
+            background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(239,246,249,0.90));
+        }
+
+        .diary-toolbar-copy {
+            max-width: 540px;
+        }
+
+        .diary-toolbar-copy strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+
+        .diary-toolbar-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .reports-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(10, 23, 44, 0.44);
+            backdrop-filter: blur(8px);
+            z-index: 90;
+        }
+
+        .reports-modal.show {
+            display: flex;
+        }
+
+        .reports-modal-card {
+            width: min(760px, 100%);
+            border-radius: 28px;
+            border: 1px solid rgba(20,49,93,0.10);
+            background: rgba(255,255,255,0.98);
+            box-shadow: 0 28px 60px rgba(10, 46, 90, 0.24);
+            overflow: hidden;
+        }
+
+        .reports-modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 22px 24px;
+            border-bottom: 1px solid rgba(20,49,93,0.08);
+        }
+
+        .reports-modal-head h3 {
+            margin: 0;
+            font-family: 'Manrope', sans-serif;
+            font-size: 28px;
+            letter-spacing: -0.03em;
+        }
+
+        .reports-modal-close {
+            width: 44px;
+            height: 44px;
+            border: 1px solid rgba(20,49,93,0.12);
+            border-radius: 14px;
+            background: white;
+            color: var(--muted);
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .reports-modal-body {
+            padding: 24px;
+            display: grid;
+            gap: 20px;
+        }
+
+        .report-section {
+            display: grid;
+            gap: 12px;
+            padding: 18px 20px;
+            border-radius: 22px;
+            border: 1px solid rgba(20,49,93,0.08);
+            background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(239,246,249,0.90));
+        }
+
+        .report-section h4 {
+            margin: 0;
+            font-family: 'Manrope', sans-serif;
+            font-size: 22px;
+            letter-spacing: -0.02em;
+        }
+
+        .report-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .report-preview {
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.78);
+            border: 1px solid rgba(20,49,93,0.08);
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .summary-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .summary-chip.ok { background: var(--green-soft); color: #166534; }
+        .summary-chip.warn { background: var(--amber-soft); color: #92400e; }
+
+        .diary-students {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            margin-bottom: 18px;
+        }
+
+        .diary-student-card {
+            padding: 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(20,49,93,0.08);
+            background: white;
+        }
+
+        .table-wrap {
+            overflow: auto;
+            border: 1px solid rgba(20,49,93,0.08);
+            border-radius: 22px;
+            background: white;
+        }
+
+        .diary-table {
+            width: 100%;
+            min-width: 780px;
+            border-collapse: collapse;
+        }
+
+        .diary-table th,
+        .diary-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(20,49,93,0.08);
+            border-right: 1px solid rgba(20,49,93,0.06);
+            text-align: center;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .diary-table th:first-child,
+        .diary-table td:first-child,
+        .diary-table th:nth-child(2),
+        .diary-table td:nth-child(2) {
+            text-align: left;
+            position: sticky;
+            background: white;
+            z-index: 2;
+        }
+
+        .diary-table th:first-child,
+        .diary-table td:first-child { left: 0; min-width: 58px; }
+        .diary-table th:nth-child(2),
+        .diary-table td:nth-child(2) { left: 58px; min-width: 220px; }
+
+        .diary-table th {
+            position: sticky;
+            top: 0;
+            background: #f5fafc;
+            z-index: 3;
+            font-weight: 800;
+        }
+
+        .diary-table td.present-cell {
+            background: rgba(22,163,74,0.08);
+            color: #166534;
+            font-weight: 800;
+        }
+
+        .diary-table td.absent-cell {
+            background: rgba(220,38,38,0.08);
+            color: #991b1b;
+            font-weight: 800;
+        }
 
         .message {
             display: none;
@@ -455,13 +775,33 @@
 
         .hidden { display: none !important; }
 
-        @media (max-width: 1024px) {
-            .hero-grid,
-            .portal-grid {
+        .export-note {
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 1100px) {
+            .portal-grid,
+            .workspace-grid {
                 grid-template-columns: 1fr;
             }
 
-            .detail-card { min-height: 0; }
+            .detail-card,
+            .diary-card { min-height: 0; }
+        }
+
+        @media (max-width: 860px) {
+            .diary-students { grid-template-columns: 1fr 1fr; }
+            .diary-controls { grid-template-columns: 1fr; }
+            .diary-actions { min-width: 0; grid-template-columns: 1fr 1fr; }
+            .diary-toolbar {
+                display: grid;
+                grid-template-columns: 1fr;
+                align-items: start;
+            }
+            .diary-toolbar-actions {
+                justify-content: flex-start;
+            }
         }
 
         @media (max-width: 720px) {
@@ -470,28 +810,44 @@
             .hero-top,
             .panel-head,
             .detail-head,
+            .classes-head,
+            .diary-head,
             .session-item,
-            .session-title-row {
+            .class-item,
+            .session-title-row,
+            .class-title-row {
                 grid-template-columns: 1fr;
                 display: grid;
             }
             .toolbar,
             .metrics,
-            .detail-summary {
+            .detail-summary,
+            .diary-summary {
                 grid-template-columns: 1fr 1fr;
             }
-            .session-actions { min-width: 0; }
+            .session-actions,
+            .class-actions,
+            .diary-actions { min-width: 0; }
+            .diary-students { grid-template-columns: 1fr; }
+            .classes-card {
+                position: static;
+            }
         }
 
         @media (max-width: 520px) {
             .toolbar,
             .metrics,
-            .detail-summary {
+            .detail-summary,
+            .diary-summary {
                 grid-template-columns: 1fr;
             }
             .student-row {
                 align-items: flex-start;
                 flex-direction: column;
+            }
+            .report-actions {
+                display: grid;
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -505,12 +861,12 @@
                     <div>
                         <span class="eyebrow">Portal Professor</span>
                         <h1>Chamadas sincronizadas</h1>
-                        <p>Consulte aqui as chamadas que o app Pro já sincronizou para o portal do professor.</p>
+                        <p>Consulte aqui as chamadas que o app Pro já sincronizou para o portal do professor, com visão por turma, Diário de Classe e exportações úteis de mesa.</p>
                     </div>
                 </div>
                 <div class="hero-actions">
                     <a class="hero-link" href="../login.html?mode=professor">Trocar acesso</a>
-                    <a class="hero-link" href="../index.html">Voltar ao site</a>
+                    <a class="hero-link" href="https://chamadafacil.net.br">Voltar ao site</a>
                 </div>
             </div>
 
@@ -536,14 +892,22 @@
                     <div id="login-message" class="message info"></div>
                 </section>
 
-                <div class="status-pill">
-                    <span id="status-dot" class="status-dot"></span>
-                    <span id="status-text">Aguardando conexão com a API do portal</span>
+                <div class="hero-panels">
+                    <div class="status-pill">
+                        <span id="status-dot" class="status-dot"></span>
+                        <span id="status-text">Aguardando conexão com a API do portal</span>
+                    </div>
+                    <div class="hero-nav">
+                        <a class="hero-chip" href="#calls">Chamadas</a>
+                        <a class="hero-chip" href="#classes">Turmas</a>
+                        <a class="hero-chip" href="#diary">Diário de Classe</a>
+                        <a class="hero-chip" href="#reports">Relatórios</a>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="portal-grid">
+        <section id="calls" class="portal-grid">
             <section class="card panel-card">
                 <div class="panel-head">
                     <div>
@@ -613,11 +977,129 @@
                 </div>
             </aside>
         </section>
+
+        <section id="classes" class="workspace-grid">
+            <section class="card classes-card">
+                <div class="classes-head">
+                    <div>
+                        <h2>Turmas sincronizadas</h2>
+                        <p>Escolha uma turma para carregar o Diário de Classe ao lado, revisar o mês e preparar os relatórios de mesa.</p>
+                    </div>
+                </div>
+                <div id="classes-list" class="classes-list"></div>
+                <div id="classes-empty" class="empty-state">
+                    <div>
+                        <h3>Nenhuma turma disponível</h3>
+                        <p>Assim que a primeira chamada sincronizada entrar, o portal organiza a leitura por turma aqui.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="diary" class="card diary-card">
+                <div class="diary-head">
+                    <div>
+                        <h2>Diário de Classe</h2>
+                        <p>Visão mensal da turma com resumo por aluno, tabela completa e relatórios prontos para notebook, impressão e assinatura.</p>
+                    </div>
+                </div>
+
+                <div class="diary-controls">
+                    <div class="field">
+                        <label for="diary-month">Mês</label>
+                        <input id="diary-month" type="month">
+                    </div>
+                    <div id="diary-selected" class="diary-selected">
+                        <strong>Turma não selecionada</strong>
+                        <span class="diary-note">Escolha uma turma na coluna lateral para abrir o Diário de Classe completo nesta área.</span>
+                    </div>
+                    <div></div>
+                </div>
+
+                <div id="diary-empty" class="empty-state">
+                    <div>
+                        <h3>Abra uma turma</h3>
+                        <p>O Diário ocupa esta área principal. Escolha uma turma na coluna lateral e o resumo mensal abre aqui, com tabela, exportações e impressão.</p>
+                    </div>
+                </div>
+
+                <div id="diary-content" class="hidden">
+                    <div class="diary-toolbar">
+                        <div class="diary-toolbar-copy">
+                            <strong>Relatórios do mês visível</strong>
+                            <span class="diary-note">Abra o modal de relatórios para exportar a planilha, gerar o PDF mensal completo ou imprimir a lista assinável da turma.</span>
+                        </div>
+                        <div id="reports" class="diary-toolbar-actions">
+                            <button id="btn-open-reports" class="btn btn-primary btn-inline" type="button">Relatórios</button>
+                        </div>
+                    </div>
+                    <div class="diary-summary">
+                        <div class="summary-box"><strong id="diary-total-sessions">0</strong><span class="metric-label">Chamadas no mês</span></div>
+                        <div class="summary-box"><strong id="diary-total-students">0</strong><span class="metric-label">Alunos na turma</span></div>
+                        <div class="summary-box"><strong id="diary-month-frequency">0%</strong><span class="metric-label">Frequência média</span></div>
+                    </div>
+                    <div id="diary-meta" class="message show info">Diário pronto para visualização e exportação.</div>
+                    <div id="diary-students" class="diary-students"></div>
+                    <div class="table-wrap">
+                        <table class="diary-table">
+                            <thead id="diary-head-row"></thead>
+                            <tbody id="diary-body"></tbody>
+                        </table>
+                    </div>
+                    <p class="export-note">Exportação em CSV e impressão da lista de presença com assinatura usam exatamente o mês e a turma visíveis aqui.</p>
+                </div>
+            </section>
+        </section>
     </div>
 
+    <div id="reports-modal" class="reports-modal" aria-hidden="true">
+        <div class="reports-modal-card">
+            <div class="reports-modal-head">
+                <h3>Relatórios</h3>
+                <button id="btn-close-reports" class="reports-modal-close" type="button" aria-label="Fechar relatórios">×</button>
+            </div>
+            <div class="reports-modal-body">
+                <section class="report-section">
+                    <h4>Relatório Mensal de Chamadas</h4>
+                    <p class="diary-note">Exporta o Diário de Classe do mês selecionado, com a grade mensal completa e os totais por aluno.</p>
+                    <div class="report-actions">
+                        <button id="btn-export-diary-csv" class="btn btn-secondary btn-inline" type="button">Exportar Plan</button>
+                        <button id="btn-export-diary-pdf" class="btn btn-secondary btn-inline" type="button">Exportar PDF</button>
+                    </div>
+                </section>
+
+                <section class="report-section">
+                    <h4>Lista de Presença</h4>
+                    <p class="diary-note">Gera a versão para assinatura em mesa, separada do relatório mensal. Ideal para impressão e conferência.</p>
+                    <div class="report-actions">
+                        <button id="btn-print-signature" class="btn btn-primary btn-inline" type="button">Imprimir lista</button>
+                    </div>
+                </section>
+
+                <section class="report-section">
+                    <h4>Pontuação</h4>
+                    <p class="diary-note">Totalização dos pontos por aluno no mês selecionado. Essa parte ainda depende da mesma base de eventos do apk para entrar no portal.</p>
+                    <div class="report-actions">
+                        <button id="btn-points-pdf" class="btn btn-secondary btn-inline" type="button">Gerar PDF de Pontos</button>
+                    </div>
+                    <div id="report-points-preview" class="report-preview">No momento, a pontuação ainda não está sincronizada no portal professor.</div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="../libs/jspdf.umd.min.js"></script>
     <script>
         const API_BASE = resolveApiBase();
         const STORAGE_KEY = 'cf_portal_professor_auth';
+        const state = {
+            token: '',
+            user: null,
+            sessions: [],
+            classGroups: [],
+            detailCache: new Map(),
+            selectedClassKey: '',
+            diaryModel: null
+        };
 
         function resolveApiBase() {
             const params = new URLSearchParams(window.location.search);
@@ -635,12 +1117,6 @@
         function apiLabel() {
             return API_BASE.includes('chamadafacil-api.local') ? 'API local' : 'API do portal';
         }
-
-        const state = {
-            token: '',
-            user: null,
-            sessions: []
-        };
 
         function setMessage(text, type = 'info') {
             const el = document.getElementById('login-message');
@@ -702,12 +1178,19 @@
         function clearAuth() {
             state.token = '';
             state.user = null;
+            state.sessions = [];
+            state.classGroups = [];
+            state.selectedClassKey = '';
+            state.diaryModel = null;
+            state.detailCache = new Map();
             localStorage.removeItem(STORAGE_KEY);
             document.getElementById('btn-refresh').classList.add('hidden');
             document.getElementById('btn-clear-auth').classList.add('hidden');
             updateStatus('Aguardando conexão com a API do portal', 'neutral');
             renderSessions([]);
+            renderClassGroups([]);
             resetDetail();
+            resetDiary();
         }
 
         async function login(email, name) {
@@ -770,7 +1253,85 @@
                         </div>
                     </div>
                     <div class="session-actions">
-                        <button class="btn btn-secondary" type="button" onclick="loadDetail(${session.id})">Ver detalhes</button>
+                        <button class="btn btn-secondary btn-inline" type="button" onclick="loadDetail(${session.id})">Ver detalhes</button>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        function buildClassGroups(sessions) {
+            const map = new Map();
+            sessions.forEach((session) => {
+                const schoolName = session.school_name || 'Sem escola';
+                const className = session.class_name || 'Turma';
+                const key = `${schoolName}::${className}`;
+                if (!map.has(key)) {
+                    map.set(key, {
+                        key,
+                        schoolName,
+                        className,
+                        sessions: [],
+                        totalStudents: Number(session.total_students) || 0,
+                        lastDate: session.attendance_date || ''
+                    });
+                }
+                const group = map.get(key);
+                group.sessions.push(session);
+                group.totalStudents = Math.max(group.totalStudents, Number(session.total_students) || 0);
+                if ((session.attendance_date || '') > group.lastDate) {
+                    group.lastDate = session.attendance_date || '';
+                }
+            });
+
+            return Array.from(map.values())
+                .map((group) => {
+                    const totalSessions = group.sessions.length;
+                    const avgFrequency = totalSessions
+                        ? Math.round((group.sessions.reduce((sum, item) => sum + (Number(item.frequency_percent) || 0), 0) / totalSessions) * 10) / 10
+                        : 0;
+                    return {
+                        ...group,
+                        totalSessions,
+                        avgFrequency
+                    };
+                })
+                .sort((a, b) => {
+                    if (a.schoolName !== b.schoolName) return a.schoolName.localeCompare(b.schoolName, 'pt-BR');
+                    return a.className.localeCompare(b.className, 'pt-BR');
+                });
+        }
+
+        function renderClassGroups(groups) {
+            state.classGroups = groups;
+            const list = document.getElementById('classes-list');
+            const empty = document.getElementById('classes-empty');
+
+            if (!groups.length) {
+                list.innerHTML = '';
+                empty.classList.remove('hidden');
+                resetDiary();
+                return;
+            }
+
+            empty.classList.add('hidden');
+            list.innerHTML = groups.map((group) => `
+                <article class="class-item ${group.key === state.selectedClassKey ? 'active' : ''}">
+                    <div>
+                        <div class="class-title-row">
+                            <div>
+                                <h3>${escapeHtml(group.className)}</h3>
+                                <div class="class-chip">${escapeHtml(group.schoolName)}</div>
+                            </div>
+                            <div class="summary-chip ${group.avgFrequency >= 75 ? 'ok' : 'warn'}">${String(group.avgFrequency).replace('.', ',')}%</div>
+                        </div>
+                        <div class="class-meta">
+                            <span>${group.totalSessions} chamada(s)</span>
+                            <span>${group.totalStudents} aluno(s)</span>
+                            <span>Última leitura: ${formatDate(group.lastDate)}</span>
+                        </div>
+                    </div>
+                    <div class="class-actions">
+                        <button class="btn btn-secondary btn-inline" type="button" onclick="selectClassGroup('${encodeForAttr(group.key)}')">Abrir no painel</button>
                     </div>
                 </article>
             `).join('');
@@ -783,6 +1344,48 @@
             document.getElementById('students-list').innerHTML = '';
         }
 
+        function resetDiary() {
+            state.diaryModel = null;
+            document.getElementById('diary-empty').classList.remove('hidden');
+            document.getElementById('diary-content').classList.add('hidden');
+            document.getElementById('diary-selected').innerHTML = '<strong>Turma não selecionada</strong><span class="diary-note">Escolha uma turma na coluna lateral para abrir o Diário de Classe completo nesta área.</span>';
+            document.getElementById('diary-students').innerHTML = '';
+            document.getElementById('diary-head-row').innerHTML = '';
+            document.getElementById('diary-body').innerHTML = '';
+            document.getElementById('diary-total-sessions').textContent = '0';
+            document.getElementById('diary-total-students').textContent = '0';
+            document.getElementById('diary-month-frequency').textContent = '0%';
+            document.getElementById('diary-meta').textContent = 'Diário pronto para visualização e exportação.';
+        }
+
+        function openReportsModal() {
+            if (!state.diaryModel) {
+                setMessage('Selecione uma turma com chamadas no mês para abrir os relatórios.', 'info');
+                return;
+            }
+            const modal = document.getElementById('reports-modal');
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeReportsModal() {
+            const modal = document.getElementById('reports-modal');
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        function currentMonthValue() {
+            return document.getElementById('diary-month').value;
+        }
+
+        function ensureDefaultMonth() {
+            const monthInput = document.getElementById('diary-month');
+            if (monthInput.value) return;
+            const firstSession = state.sessions[0];
+            const base = firstSession?.attendance_date || new Date().toISOString().slice(0, 10);
+            monthInput.value = base.slice(0, 7);
+        }
+
         async function loadSessions() {
             if (!state.token) return;
 
@@ -790,7 +1393,7 @@
             const school = document.getElementById('filter-school').value.trim();
             const dateFrom = document.getElementById('filter-date-from').value;
             const dateTo = document.getElementById('filter-date-to').value;
-            params.set('limit', '30');
+            params.set('limit', '120');
             if (school) params.set('school_name', school);
             if (dateFrom) params.set('date_from', dateFrom);
             if (dateTo) params.set('date_to', dateTo);
@@ -798,14 +1401,28 @@
             try {
                 updateStatus('Consultando chamadas sincronizadas...', 'warn');
                 const data = await apiRequest(`/attendance-sessions?${params.toString()}`);
-                renderSessions(data.sessions || []);
+                const sessions = data.sessions || [];
+                renderSessions(sessions);
+                const groups = buildClassGroups(sessions);
+                renderClassGroups(groups);
+                ensureDefaultMonth();
+                if (groups.length) {
+                    const selected = groups.some((item) => item.key === state.selectedClassKey)
+                        ? state.selectedClassKey
+                        : groups[0].key;
+                    await selectClassGroup(encodeForAttr(selected), false);
+                } else {
+                    resetDiary();
+                }
                 updateStatus(`${apiLabel()} conectada · ${data.pagination?.total || 0} chamada(s) encontrada(s)`, 'ok');
                 clearMessage();
             } catch (error) {
                 updateStatus('Erro ao consultar chamadas sincronizadas', 'err');
                 setMessage(error.message || 'Não foi possível carregar as chamadas.', 'error');
                 renderSessions([]);
+                renderClassGroups([]);
                 resetDetail();
+                resetDiary();
             }
         }
 
@@ -814,6 +1431,7 @@
                 const data = await apiRequest(`/attendance-sessions/detail?id=${id}`);
                 const session = data.session;
                 const students = data.students || [];
+                state.detailCache.set(Number(id), data);
                 document.getElementById('detail-empty').classList.add('hidden');
                 document.getElementById('detail-content').classList.remove('hidden');
                 document.getElementById('detail-subtitle').textContent = `${session.class_name} · ${session.school_name || 'Sem escola'} · ${formatDate(session.attendance_date)}`;
@@ -837,10 +1455,591 @@
             }
         }
 
+        async function ensureSessionDetail(sessionId) {
+            const numericId = Number(sessionId);
+            if (state.detailCache.has(numericId)) return state.detailCache.get(numericId);
+            const data = await apiRequest(`/attendance-sessions/detail?id=${numericId}`);
+            state.detailCache.set(numericId, data);
+            return data;
+        }
+
+        async function selectClassGroup(encodedKey, updateHash = true) {
+            const key = decodeFromAttr(encodedKey);
+            state.selectedClassKey = key;
+            renderClassGroups(state.classGroups);
+            if (updateHash) history.replaceState(null, '', '#diary');
+            await loadDiaryForSelectedClass();
+            focusDiaryPanel();
+        }
+
+        async function loadDiaryForSelectedClass() {
+            const group = state.classGroups.find((item) => item.key === state.selectedClassKey);
+            if (!group) {
+                resetDiary();
+                return;
+            }
+
+            ensureDefaultMonth();
+            const month = currentMonthValue();
+            const monthlySessions = group.sessions
+                .filter((session) => (session.attendance_date || '').startsWith(month))
+                .sort((a, b) => {
+                    const byDate = String(a.attendance_date || '').localeCompare(String(b.attendance_date || ''));
+                    if (byDate !== 0) return byDate;
+                    return Number(a.slot || 0) - Number(b.slot || 0);
+                });
+
+            document.getElementById('diary-selected').innerHTML = `
+                <strong>${escapeHtml(group.className)}</strong>
+                <span class="diary-note">${escapeHtml(group.schoolName)} · ${monthLabel(month)} · ${monthlySessions.length} chamada(s) no mês visível.</span>
+                <div class="summary-row">
+                    <span class="summary-chip ok">${group.totalStudents} aluno(s)</span>
+                    <span class="summary-chip ${group.avgFrequency >= 75 ? 'ok' : 'warn'}">${String(group.avgFrequency).replace('.', ',')}% média geral</span>
+                </div>
+            `;
+
+            if (!monthlySessions.length) {
+                state.diaryModel = null;
+                document.getElementById('diary-empty').classList.remove('hidden');
+                document.getElementById('diary-content').classList.add('hidden');
+                document.getElementById('diary-meta').textContent = 'Nenhuma chamada encontrada para esta turma no mês selecionado.';
+                return;
+            }
+
+            updateStatus('Montando Diário de Classe da turma...', 'warn');
+            const details = await Promise.all(monthlySessions.map((session) => ensureSessionDetail(session.id)));
+            const diaryModel = buildDiaryModel(group, month, monthlySessions, details);
+            state.diaryModel = diaryModel;
+            renderDiaryModel(diaryModel);
+            updateStatus(`${apiLabel()} conectada · diário carregado para ${group.className}`, 'ok');
+        }
+
+        function buildDiaryModel(group, month, sessions, details) {
+            const [year, monthNumber] = month.split('-').map(Number);
+            const totalDays = new Date(year, monthNumber, 0).getDate();
+            const columns = Array.from({ length: totalDays }, (_, index) => {
+                const day = index + 1;
+                return {
+                    id: day,
+                    label: String(day).padStart(2, '0'),
+                    slot: '',
+                    date: `${month}-${String(day).padStart(2, '0')}`
+                };
+            });
+
+            const studentsMap = new Map();
+
+            details.forEach((detail) => {
+                const sessionDate = detail?.session?.attendance_date || '';
+                const sessionDay = Number((sessionDate || '').slice(-2));
+                (detail.students || []).forEach((student) => {
+                    const key = `${student.student_name || 'Aluno'}::${student.enrollment_code || ''}`;
+                    if (!studentsMap.has(key)) {
+                        studentsMap.set(key, {
+                            key,
+                            name: student.student_name || 'Aluno',
+                            enrollment: student.enrollment_code || '',
+                            statuses: {},
+                            present: 0,
+                            absent: 0
+                        });
+                    }
+                    const entry = studentsMap.get(key);
+                    const status = student.status === 'present' ? 'P' : 'F';
+                    entry.statuses[sessionDay] = status;
+                    if (status === 'P') entry.present += 1;
+                    else entry.absent += 1;
+                });
+            });
+
+            const students = Array.from(studentsMap.values())
+                .map((student) => ({
+                    ...student,
+                    frequency: columns.length ? Math.round((student.present / columns.length) * 1000) / 10 : 0
+                }))
+                .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+
+            const totalPresent = students.reduce((sum, student) => sum + student.present, 0);
+            const totalCells = students.length * columns.length;
+            const monthFrequency = totalCells ? Math.round((totalPresent / totalCells) * 1000) / 10 : 0;
+
+            return {
+                className: group.className,
+                schoolName: group.schoolName,
+                schoolLogoUrl: group.schoolLogoUrl || '',
+                month,
+                columns,
+                students,
+                totalSessions: columns.length,
+                totalStudents: students.length,
+                monthFrequency,
+                actualSessions: sessions.length
+            };
+        }
+
+        function renderDiaryModel(model) {
+            document.getElementById('diary-empty').classList.add('hidden');
+            document.getElementById('diary-content').classList.remove('hidden');
+            document.getElementById('diary-total-sessions').textContent = model.actualSessions;
+            document.getElementById('diary-total-students').textContent = model.totalStudents;
+            document.getElementById('diary-month-frequency').textContent = `${String(model.monthFrequency).replace('.', ',')}%`;
+            document.getElementById('diary-meta').textContent = `${model.className} · ${monthLabel(model.month)} · ${model.actualSessions} chamada(s) carregada(s) para exportação, PDF e impressão.`;
+
+            document.getElementById('diary-students').innerHTML = model.students.map((student) => `
+                <article class="diary-student-card">
+                    <h4>${escapeHtml(student.name)}</h4>
+                    <p>${student.enrollment ? `Matrícula ${escapeHtml(student.enrollment)}` : 'Sem matrícula'}</p>
+                    <div class="summary-row">
+                        <span class="summary-chip ok">P: ${student.present}</span>
+                        <span class="summary-chip warn">F: ${student.absent}</span>
+                        <span class="summary-chip ${student.frequency >= 75 ? 'ok' : 'warn'}">${String(student.frequency).replace('.', ',')}%</span>
+                    </div>
+                </article>
+            `).join('');
+
+            document.getElementById('diary-head-row').innerHTML = `
+                <tr>
+                    <th>Nº</th>
+                    <th>Aluno</th>
+                    ${model.columns.map((column) => `<th>${column.label}<br><span class="diary-column">${column.slot}</span></th>`).join('')}
+                    <th>P</th>
+                    <th>F</th>
+                    <th>Freq.</th>
+                </tr>
+            `;
+
+            document.getElementById('diary-body').innerHTML = model.students.map((student, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>
+                        <strong>${escapeHtml(student.name)}</strong>
+                        <div class="diary-column">${student.enrollment ? `Matrícula ${escapeHtml(student.enrollment)}` : 'Sem matrícula'}</div>
+                    </td>
+                    ${model.columns.map((column) => {
+                        const status = student.statuses[column.id] || '';
+                        const className = status === 'P' ? 'present-cell' : status === 'F' ? 'absent-cell' : '';
+                        return `<td class="${className}">${status}</td>`;
+                    }).join('')}
+                    <td class="present-cell">${student.present}</td>
+                    <td class="absent-cell">${student.absent}</td>
+                    <td>${String(student.frequency).replace('.', ',')}%</td>
+                </tr>
+            `).join('');
+        }
+
+        function buildDiaryCsv(model) {
+            const headers = ['Numero', 'Aluno', 'Matricula', ...model.columns.map((column) => `${column.label} ${column.slot}`), 'Presentes', 'Faltas', 'Frequencia'];
+            const rows = model.students.map((student, index) => [
+                String(index + 1),
+                student.name,
+                student.enrollment,
+                ...model.columns.map((column) => student.statuses[column.id] || ''),
+                String(student.present),
+                String(student.absent),
+                `${String(student.frequency).replace('.', ',')}%`
+            ]);
+            return [headers, ...rows]
+                .map((row) => row.map(csvCell).join(';'))
+                .join('\r\n');
+        }
+
+        function csvCell(value) {
+            const text = String(value ?? '');
+            if (/[";\n\r]/.test(text)) {
+                return `"${text.replace(/"/g, '""')}"`;
+            }
+            return text;
+        }
+
+        function exportDiaryCsv() {
+            if (!state.diaryModel) {
+                setMessage('Selecione uma turma com chamadas no mês para exportar o CSV.', 'info');
+                return;
+            }
+            const csv = buildDiaryCsv(state.diaryModel);
+            const fileName = `diario_${slugify(state.diaryModel.className)}_${state.diaryModel.month}.csv`;
+            downloadBlob(csv, fileName, 'text/csv;charset=utf-8;');
+        }
+
+        function focusDiaryPanel() {
+            const diary = document.getElementById('diary');
+            if (!diary) return;
+            diary.classList.remove('flash-focus');
+            void diary.offsetWidth;
+            diary.classList.add('flash-focus');
+            setTimeout(() => diary.classList.remove('flash-focus'), 1200);
+            diary.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        async function loadImageAsDataUrl(src) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.naturalWidth || img.width;
+                    canvas.height = img.naturalHeight || img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    resolve(canvas.toDataURL('image/png'));
+                };
+                img.onerror = () => resolve('');
+                img.src = src;
+            });
+        }
+
+        async function resolveDiaryLogoData(model) {
+            if (model?.schoolLogoUrl) {
+                const schoolLogo = await loadImageAsDataUrl(model.schoolLogoUrl);
+                if (schoolLogo) return schoolLogo;
+            }
+            return loadImageAsDataUrl('../assets/logo1024.svg');
+        }
+
+        function buildDiaryReportCanvas(model) {
+            const rowH = 26;
+            const headerH = 30;
+            const colNumero = 52;
+            const colAluno = 196;
+            const colMatricula = 120;
+            const colDia = 26;
+            const colTotal = 64;
+
+            const colsDiasW = model.columns.length * colDia;
+            const width = colNumero + colAluno + colMatricula + colsDiasW + (colTotal * 2);
+            const height = headerH + (model.students.length * rowH);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            const drawCell = (x, y, w, h, text, bg = null) => {
+                if (bg) {
+                    ctx.fillStyle = bg;
+                    ctx.fillRect(x, y, w, h);
+                }
+                ctx.strokeStyle = '#d0d7de';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, w, h);
+                ctx.fillStyle = '#111827';
+                ctx.font = '12px Inter, Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(String(text ?? ''), x + w / 2, y + h / 2);
+            };
+
+            let x = 0;
+            drawCell(x, 0, colNumero, headerH, 'Nº', '#f3f4f6');
+            x += colNumero;
+            drawCell(x, 0, colAluno, headerH, 'Aluno', '#f3f4f6');
+            x += colAluno;
+            drawCell(x, 0, colMatricula, headerH, 'Matrícula', '#f3f4f6');
+            x += colMatricula;
+            model.columns.forEach((column) => {
+                drawCell(x, 0, colDia, headerH, column.label, '#f3f4f6');
+                x += colDia;
+            });
+            drawCell(x, 0, colTotal, headerH, 'P', '#f3f4f6');
+            x += colTotal;
+            drawCell(x, 0, colTotal, headerH, 'F', '#f3f4f6');
+
+            model.students.forEach((student, index) => {
+                const y = headerH + (index * rowH);
+
+                ctx.fillStyle = '#111827';
+                ctx.font = '12px Inter, Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.strokeStyle = '#d0d7de';
+                ctx.strokeRect(0, y, colNumero, rowH);
+                ctx.fillText(String(index + 1), colNumero / 2, y + rowH / 2);
+
+                ctx.textAlign = 'left';
+                ctx.strokeRect(colNumero, y, colAluno, rowH);
+                ctx.fillText(String(student.name || ''), colNumero + 8, y + rowH / 2);
+
+                ctx.strokeRect(colNumero + colAluno, y, colMatricula, rowH);
+                ctx.fillText(String(student.enrollment || ''), colNumero + colAluno + 8, y + rowH / 2);
+
+                let xDia = colNumero + colAluno + colMatricula;
+                model.columns.forEach((column) => {
+                    const status = student.statuses[column.id] || '';
+                    let bg = null;
+                    if (status === 'P') bg = '#dff5e3';
+                    if (status === 'F') bg = '#fde2e1';
+                    drawCell(xDia, y, colDia, rowH, status, bg);
+                    xDia += colDia;
+                });
+
+                drawCell(xDia, y, colTotal, rowH, student.present);
+                xDia += colTotal;
+                drawCell(xDia, y, colTotal, rowH, student.absent);
+            });
+
+            return canvas;
+        }
+
+        async function exportDiaryPdf(options = {}) {
+            if (!state.diaryModel) {
+                setMessage('Selecione uma turma com chamadas no mês para gerar o PDF.', 'info');
+                return;
+            }
+            if (!window.jspdf?.jsPDF) {
+                setMessage('Biblioteca de PDF não carregada no portal.', 'error');
+                return;
+            }
+
+            const model = state.diaryModel;
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+            const pageW = doc.internal.pageSize.getWidth();
+            const pageH = doc.internal.pageSize.getHeight();
+            const drawW = pageW - 20;
+            const headerTopY = 8;
+            const imageTopY = 17;
+            const assinaturaAreaTopY = pageH - 32;
+            const assinaturaLineY = pageH - 10;
+            const assinaturaNomeY = pageH - 5;
+            const assinaturaLineX1 = pageW - 74;
+            const assinaturaLineX2 = pageW - 12;
+            const usableH = assinaturaAreaTopY - imageTopY;
+            const tabelaHeaderPx = 30;
+            const tabelaRowPx = 26;
+            const canvas = buildDiaryReportCanvas(model);
+            const ratio = drawW / canvas.width;
+            const maxSlicePx = Math.max(1, Math.floor(usableH / ratio));
+            const logoData = await resolveDiaryLogoData(model);
+            const professorNome = document.getElementById('login-name')?.value?.trim() || '';
+            const title = `Relatorio Mensal - ${model.className} - ${monthLabel(model.month)}`;
+
+            const desenharAssinatura = () => {
+                doc.setDrawColor(107, 114, 128);
+                doc.setLineWidth(0.35);
+                doc.line(assinaturaLineX1, assinaturaLineY, assinaturaLineX2, assinaturaLineY);
+                if (professorNome) {
+                    doc.setFontSize(9);
+                    doc.text(professorNome, assinaturaLineX1, assinaturaNomeY);
+                }
+            };
+
+            let offsetY = 0;
+            let page = 0;
+            while (offsetY < canvas.height) {
+                if (page > 0) doc.addPage('a4', 'landscape');
+
+                if (logoData) {
+                    doc.addImage(logoData, 'PNG', 10, 4, 10, 10);
+                }
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(33, 47, 82);
+                doc.text(model.schoolName || 'Chamada Fácil', 22, 10.1);
+                doc.setFont(undefined, 'normal');
+                doc.setTextColor(17, 24, 39);
+                doc.text(page > 0 ? `${title} (cont.)` : title, pageW - 12, headerTopY, { align: 'right' });
+
+                const remainingPx = canvas.height - offsetY;
+                let sliceH = remainingPx;
+                if (remainingPx > maxSlicePx) {
+                    if (offsetY === 0) {
+                        const rowsFit = Math.max(1, Math.floor((maxSlicePx - tabelaHeaderPx) / tabelaRowPx));
+                        sliceH = tabelaHeaderPx + (rowsFit * tabelaRowPx);
+                    } else {
+                        const rowsFit = Math.max(1, Math.floor(maxSlicePx / tabelaRowPx));
+                        sliceH = rowsFit * tabelaRowPx;
+                    }
+                    if (sliceH > remainingPx) sliceH = remainingPx;
+                }
+
+                const sliceCanvas = document.createElement('canvas');
+                sliceCanvas.width = canvas.width;
+                sliceCanvas.height = sliceH;
+                const sctx = sliceCanvas.getContext('2d');
+                sctx.drawImage(canvas, 0, offsetY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+
+                const drawH = sliceH * ratio;
+                doc.addImage(sliceCanvas.toDataURL('image/png'), 'PNG', 10, imageTopY, drawW, drawH);
+                desenharAssinatura();
+
+                offsetY += sliceH;
+                page += 1;
+            }
+
+            const filename = `relatorio_mensal_${slugify(model.className)}_${model.month.replace('-', '_')}.pdf`;
+            if (options.openInsteadOfDownload) {
+                const blobUrl = doc.output('bloburl');
+                const popup = window.open(blobUrl, '_blank');
+                if (!popup) {
+                    doc.save(filename);
+                    return;
+                }
+                popup.focus();
+            } else {
+                doc.save(filename);
+            }
+        }
+
+        async function printSignatureList() {
+            if (!state.diaryModel) {
+                setMessage('Selecione uma turma com chamadas no mês para imprimir a lista.', 'info');
+                return;
+            }
+            if (!window.jspdf?.jsPDF) {
+                setMessage('Biblioteca de PDF não carregada no portal.', 'error');
+                return;
+            }
+
+            const model = state.diaryModel;
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            const pageW = doc.internal.pageSize.getWidth();
+            const pageH = doc.internal.pageSize.getHeight();
+            const marginX = 12;
+            const tableTop = 34;
+            const rowH = 12;
+            const colNumero = 16;
+            const colAluno = 92;
+            const colMatricula = 34;
+            const colAssinatura = pageW - (marginX * 2) - colNumero - colAluno - colMatricula;
+            const professorNome = document.getElementById('login-name')?.value?.trim() || '';
+            const logoData = await resolveDiaryLogoData(model);
+            const title = `Lista de Presença - ${model.className}`;
+            const subtitle = `${monthLabel(model.month)} · ${model.actualSessions} chamada(s) carregada(s) no mês`;
+            const filename = `lista_presenca_${slugify(model.className)}_${model.month.replace('-', '_')}.pdf`;
+
+            const drawHeader = () => {
+                if (logoData) {
+                    doc.addImage(logoData, 'PNG', marginX, 8, 10, 10);
+                }
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(16);
+                doc.setTextColor(22, 42, 84);
+                doc.text(model.schoolName || 'Chamada Fácil', marginX + 13, 14);
+                doc.setFontSize(15);
+                doc.text(title, pageW - marginX, 14, { align: 'right' });
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(10);
+                doc.setTextColor(95, 111, 141);
+                doc.text(subtitle, pageW - marginX, 20, { align: 'right' });
+            };
+
+            const drawTableHeader = (y) => {
+                let x = marginX;
+                doc.setFillColor(243, 244, 246);
+                doc.setDrawColor(208, 215, 222);
+                doc.setTextColor(17, 24, 39);
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(10);
+
+                const drawCell = (w, text, align = 'center') => {
+                    doc.rect(x, y, w, rowH, 'FD');
+                    const tx = align === 'left' ? x + 3 : x + (w / 2);
+                    doc.text(text, tx, y + 7.5, { align });
+                    x += w;
+                };
+
+                drawCell(colNumero, 'Nº');
+                drawCell(colAluno, 'Aluno', 'left');
+                drawCell(colMatricula, 'Matrícula');
+                drawCell(colAssinatura, 'Assinatura', 'left');
+            };
+
+            const drawSignatureLine = () => {
+                const lineY = pageH - 18;
+                const lineX1 = pageW - 82;
+                const lineX2 = pageW - marginX;
+                doc.setDrawColor(107, 114, 128);
+                doc.setLineWidth(0.35);
+                doc.line(lineX1, lineY, lineX2, lineY);
+                if (professorNome) {
+                    doc.setFont(undefined, 'normal');
+                    doc.setFontSize(9);
+                    doc.setTextColor(55, 65, 81);
+                    doc.text(professorNome, lineX1, lineY + 5);
+                }
+            };
+
+            const drawRow = (student, index, y) => {
+                let x = marginX;
+                const drawCell = (w, text, align = 'center') => {
+                    doc.rect(x, y, w, rowH);
+                    const tx = align === 'left' ? x + 3 : x + (w / 2);
+                    doc.text(String(text || ''), tx, y + 7.5, { align });
+                    x += w;
+                };
+
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(10);
+                doc.setTextColor(17, 24, 39);
+                drawCell(colNumero, String(index + 1));
+                drawCell(colAluno, student.name || '', 'left');
+                drawCell(colMatricula, student.enrollment || '');
+                drawCell(colAssinatura, '', 'left');
+            };
+
+            drawHeader();
+
+            let y = tableTop;
+            drawTableHeader(y);
+            y += rowH;
+
+            model.students.forEach((student, index) => {
+                if (y + rowH + 24 > pageH) {
+                    drawSignatureLine();
+                    doc.addPage('a4', 'portrait');
+                    drawHeader();
+                    y = tableTop;
+                    drawTableHeader(y);
+                    y += rowH;
+                }
+                drawRow(student, index, y);
+                y += rowH;
+            });
+
+            drawSignatureLine();
+
+            const blobUrl = doc.output('bloburl');
+            const popup = window.open(blobUrl, '_blank');
+            if (!popup) {
+                doc.save(filename);
+                return;
+            }
+            popup.focus();
+        }
+
+        function downloadBlob(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function monthLabel(value) {
+            if (!value) return 'Mês atual';
+            const [year, month] = value.split('-').map(Number);
+            if (!year || !month) return value;
+            return new Date(year, month - 1, 1).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
+        }
+
         function formatDate(value) {
             if (!value) return 'Sem data';
             const date = new Date(`${value}T00:00:00`);
             return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('pt-BR');
+        }
+
+        function formatDateShort(value) {
+            if (!value) return '--';
+            const date = new Date(`${value}T00:00:00`);
+            return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
         }
 
         function formatDateTime(value) {
@@ -858,6 +2057,23 @@
                 .replace(/'/g, '&#39;');
         }
 
+        function encodeForAttr(value) {
+            return encodeURIComponent(value);
+        }
+
+        function decodeFromAttr(value) {
+            return decodeURIComponent(value);
+        }
+
+        function slugify(value) {
+            return String(value || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-zA-Z0-9]+/g, '_')
+                .replace(/^_+|_+$/g, '')
+                .toLowerCase() || 'turma';
+        }
+
         document.getElementById('login-form').addEventListener('submit', async (event) => {
             event.preventDefault();
             const email = document.getElementById('login-email').value.trim();
@@ -872,6 +2088,23 @@
             clearAuth();
             setMessage('Sessão local removida. Você pode conectar novamente quando quiser.', 'info');
         });
+        document.getElementById('diary-month').addEventListener('change', () => loadDiaryForSelectedClass());
+        document.getElementById('btn-open-reports').addEventListener('click', openReportsModal);
+        document.getElementById('btn-close-reports').addEventListener('click', closeReportsModal);
+        document.getElementById('reports-modal').addEventListener('click', (event) => {
+            if (event.target.id === 'reports-modal') closeReportsModal();
+        });
+        document.getElementById('btn-export-diary-csv').addEventListener('click', exportDiaryCsv);
+        document.getElementById('btn-export-diary-pdf').addEventListener('click', () => exportDiaryPdf());
+        document.getElementById('btn-print-signature').addEventListener('click', printSignatureList);
+        document.getElementById('btn-points-pdf').addEventListener('click', () => {
+            const preview = document.getElementById('report-points-preview');
+            preview.textContent = 'A exportação de pontos ainda depende da sincronização dessa camada no portal. Quando esse dado entrar, este botão vai gerar o PDF equivalente ao do apk.';
+            setMessage('Pontuação ainda não está disponível no portal professor. Vamos trazer essa mesma base do apk depois.', 'info');
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') closeReportsModal();
+        });
 
         window.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -879,6 +2112,7 @@
             const restored = restoreAuth();
             document.getElementById('login-email').value = hintedEmail || state.user?.email || 'professor.dev@chamadafacil.local';
             document.getElementById('login-name').value = state.user?.name || 'Professor Dev';
+            ensureDefaultMonth();
 
             if (restored) {
                 document.getElementById('btn-refresh').classList.remove('hidden');
@@ -887,6 +2121,7 @@
                 await loadSessions();
             } else {
                 resetDetail();
+                resetDiary();
             }
         });
     </script>
