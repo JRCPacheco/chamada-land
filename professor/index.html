@@ -1374,6 +1374,35 @@
             modal.setAttribute('aria-hidden', 'true');
         }
 
+        async function applyHashNavigation() {
+            const hash = String(window.location.hash || '').toLowerCase();
+            if (!hash || hash === '#chamadas') return;
+
+            if (hash === '#classes') {
+                document.getElementById('classes')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                return;
+            }
+
+            if ((hash === '#diary' || hash === '#reports') && state.classGroups.length && !state.selectedClassKey) {
+                await selectClassGroup(encodeForAttr(state.classGroups[0].key), false);
+            }
+
+            if (hash === '#diary') {
+                focusDiaryPanel();
+                return;
+            }
+
+            if (hash === '#reports') {
+                if (!state.diaryModel) {
+                    setMessage('Selecione uma turma com chamadas no mês para abrir os relatórios.', 'info');
+                    document.getElementById('classes')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    return;
+                }
+                focusDiaryPanel();
+                openReportsModal();
+            }
+        }
+
         function currentMonthValue() {
             return document.getElementById('diary-month').value;
         }
@@ -1416,6 +1445,7 @@
                 }
                 updateStatus(`${apiLabel()} conectada · ${data.pagination?.total || 0} chamada(s) encontrada(s)`, 'ok');
                 clearMessage();
+                await applyHashNavigation();
             } catch (error) {
                 updateStatus('Erro ao consultar chamadas sincronizadas', 'err');
                 setMessage(error.message || 'Não foi possível carregar as chamadas.', 'error');
@@ -2275,6 +2305,9 @@
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') closeReportsModal();
         });
+        window.addEventListener('hashchange', () => {
+            applyHashNavigation();
+        });
 
         window.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -2297,4 +2330,7 @@
     </script>
 </body>
 </html>
+
+
+
 
