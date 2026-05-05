@@ -243,6 +243,13 @@
             font-size: 13px;
         }
 
+        .btn:disabled {
+            transform: none;
+            cursor: not-allowed;
+            opacity: 0.58;
+            box-shadow: none;
+        }
+
         .status-pill {
             display: inline-flex;
             align-items: center;
@@ -1029,7 +1036,7 @@
                             <span class="diary-note">Abra o modal de relatórios para exportar a planilha, gerar o PDF mensal completo ou imprimir a lista assinável da turma.</span>
                         </div>
                         <div id="reports" class="diary-toolbar-actions">
-                            <button id="btn-open-reports" class="btn btn-primary btn-inline" type="button">Relatórios</button>
+                            <button id="btn-open-reports" class="btn btn-primary btn-inline" type="button" disabled>Relatórios</button>
                         </div>
                     </div>
                     <div class="diary-summary">
@@ -1346,6 +1353,7 @@
 
         function resetDiary() {
             state.diaryModel = null;
+            closeReportsModal();
             document.getElementById('diary-empty').classList.remove('hidden');
             document.getElementById('diary-content').classList.add('hidden');
             document.getElementById('diary-selected').innerHTML = '<strong>Turma não selecionada</strong><span class="diary-note">Escolha uma turma na coluna lateral para abrir o Diário de Classe completo nesta área.</span>';
@@ -1356,6 +1364,7 @@
             document.getElementById('diary-total-students').textContent = '0';
             document.getElementById('diary-month-frequency').textContent = '0%';
             document.getElementById('diary-meta').textContent = 'Diário pronto para visualização e exportação.';
+            document.getElementById('btn-open-reports').disabled = true;
         }
 
         function openReportsModal() {
@@ -1413,6 +1422,31 @@
             const firstSession = state.sessions[0];
             const base = firstSession?.attendance_date || new Date().toISOString().slice(0, 10);
             monthInput.value = base.slice(0, 7);
+        }
+
+        function monthFromDate(dateValue) {
+            const text = String(dateValue || '');
+            return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text.slice(0, 7) : '';
+        }
+
+        function applyGroupMonth(group, force = false) {
+            const monthInput = document.getElementById('diary-month');
+            const suggestedMonth = monthFromDate(group?.lastDate || group?.sessions?.[0]?.attendance_date || '');
+            if (!suggestedMonth) return;
+            if (force || !monthInput.value) {
+                monthInput.value = suggestedMonth;
+            }
+        }
+
+        async function jumpToLastMonthForSelectedClass() {
+            const group = state.classGroups.find((item) => item.key === state.selectedClassKey);
+            const suggestedMonth = monthFromDate(group?.lastDate || group?.sessions?.[0]?.attendance_date || '');
+            if (!group || !suggestedMonth) return;
+            const monthInput = document.getElementById('diary-month');
+            if (monthInput.value !== suggestedMonth) {
+                monthInput.value = suggestedMonth;
+            }
+            await loadDiaryForSelectedClass();
         }
 
         async function loadSessions() {
@@ -1497,6 +1531,8 @@
             const key = decodeFromAttr(encodedKey);
             state.selectedClassKey = key;
             renderClassGroups(state.classGroups);
+            const group = state.classGroups.find((item) => item.key === state.selectedClassKey);
+            applyGroupMonth(group, true);
             if (updateHash) history.replaceState(null, '', '#diary');
             await loadDiaryForSelectedClass();
             focusDiaryPanel();
@@ -1530,9 +1566,27 @@
 
             if (!monthlySessions.length) {
                 state.diaryModel = null;
+                closeReportsModal();
+                document.getElementById('btn-open-reports').disabled = true;
                 document.getElementById('diary-empty').classList.remove('hidden');
                 document.getElementById('diary-content').classList.add('hidden');
-                document.getElementById('diary-meta').textContent = 'Nenhuma chamada encontrada para esta turma no mês selecionado.';
+                const ultimoMes = monthFromDate(group.lastDate || group.sessions?.[0]?.attendance_date || '');
+                const dicaMes = ultimoMes && ultimoMes !== month
+                    ? `A última chamada desta turma está em ${monthLabel(ultimoMes)}.`
+                    : 'Selecione outro mês para carregar o diário desta turma.';
+                const acaoMes = ultimoMes && ultimoMes !== month
+                    ? `<button class="btn btn-secondary btn-inline" type="button" onclick="jumpToLastMonthForSelectedClass()">Abrir ${escapeHtml(monthLabel(ultimoMes))}</button>`
+                    : '';
+                document.getElementById('diary-selected').innerHTML = `
+                    <strong>${escapeHtml(group.className)}</strong>
+                    <span class="diary-note">${escapeHtml(group.schoolName)} · ${monthLabel(month)} · 0 chamada(s) no mês visível.</span>
+                    <div class="summary-row">
+                        <span class="summary-chip warn">Sem registros neste mês</span>
+                        <span class="summary-chip">${escapeHtml(dicaMes)}</span>
+                        ${acaoMes}
+                    </div>
+                `;
+                document.getElementById('diary-meta').textContent = `Nenhuma chamada encontrada para ${group.className} em ${monthLabel(month)}. ${dicaMes}`;
                 return;
             }
 
@@ -1733,6 +1787,7 @@
         function renderDiaryModel(model) {
             document.getElementById('diary-empty').classList.add('hidden');
             document.getElementById('diary-content').classList.remove('hidden');
+            document.getElementById('btn-open-reports').disabled = false;
             document.getElementById('diary-total-sessions').textContent = model.actualSessions;
             document.getElementById('diary-total-students').textContent = model.totalStudents;
             document.getElementById('diary-month-frequency').textContent = `${String(model.monthFrequency).replace('.', ',')}%`;
@@ -2330,6 +2385,9 @@
     </script>
 </body>
 </html>
+
+
+
 
 
 

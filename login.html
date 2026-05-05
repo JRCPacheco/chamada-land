@@ -339,7 +339,7 @@
         <div class="forms-wrapper">
             <!-- Professor Form -->
             <div id="professor-form" class="form-container active">
-                <button class="btn-google" type="button" onclick="window.location.href='professor/index.html'">
+                <button class="btn-google" type="button" onclick="window.location.href='https://portal-professor.chamadafacil.net.br/'">
                     <img src="assets/google_2025.svg" alt="">
                     Entrar com Google
                 </button>
@@ -479,7 +479,7 @@
 
             if (mode === 'professor') {
                 const email = document.getElementById('prof-email').value.trim();
-                const target = new URL('professor/index.html', window.location.href);
+                const target = new URL('https://portal-professor.chamadafacil.net.br/');
                 if (email) target.searchParams.set('email', email);
                 window.location.href = target.toString();
                 return false;
@@ -523,7 +523,7 @@
                 }));
 
                 setSchoolMessage(`Acesso liberado para ${payload.organization?.name || 'a escola'}. Redirecionando...`, 'success');
-                const target = new URL('escola/index.html', window.location.href);
+                const target = new URL('https://portal-escola.chamadafacil.net.br/');
                 target.searchParams.set('user', identifier);
                 window.location.href = target.toString();
             } catch (error) {
